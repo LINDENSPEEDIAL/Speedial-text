@@ -6,7 +6,7 @@ app.use(express.json());
 // ============================================
 // YOUR SETTINGS - FILL IN YOUR DETAILS BELOW
 // ============================================
-const CLAUDE_API_KEY = "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";
+const CLAUDE_API_KEY = "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";
 const WHATSAPP_TOKEN = "EAAOc5xUGNBwBRdgy4sWTpNvZAcAxvHjsA2ZAoHTovzfCNESZA8zFUEobXNstpBBVe90I7klDUr5ZAluv8jo09RaZAXTtZBhgXsx7QpuHVaQNZA4vV7uWDx0f85ZAZBkK2Jv4tqNeZAJutl0eRQuLeUDFwtjhuNUgEcsy93ePEy93OZCGgJJNwHrLHUOL4kjaZA1uOHrQAZAigyRg6SCvMooOZAdZBZCEb95bhoevBWaBFltIeMj9Yyamk0No6eNkYbw0k3ZABpO9EZAXkhOe7wouBynXCSAOY7mVQv9R8ZD";
 const PHONE_NUMBER_ID = "1185305807988713";
 const VERIFY_TOKEN = "speedial123";
