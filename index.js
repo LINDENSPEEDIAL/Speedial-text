@@ -3,17 +3,11 @@ const axios = require("axios");
 const app = express();
 app.use(express.json());
 
-// ============================================
-// YOUR SETTINGS - FILL IN YOUR DETAILS BELOW
-// ============================================
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
-const WHATSAPP_TOKEN = "EAAOc5xUGNBwBRROfDm7sWPH906jofTiiCCjEOFhk3L1XsXAtvYUoriesC3G908uvRUxfmN475ovxe0jTB4ZAFJ0B7dBOVotqDZCAlryZCHwCbnar2qnnnSWYbBBXRUToMZCejszJcIqcVhYmM5m0HxDjcZAUPlFvWBwCy8sX1jsHUPcgZBtLBX5ZCwYHtrMKZCXd6oam2jH3gWrdDGllvuLziOAKb0QWwRCZCBRikwgBJD4M5Pq3mUyRkDQ1s66rmHF2nOnxSWXQ1qVy3jrq38OPlMwrS";
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = "1185305807988713";
 const VERIFY_TOKEN = "speedial123";
 
-// ============================================
-// YOUR DIRECTORY DATA - ADD YOUR LISTINGS HERE
-// ============================================
 const DIRECTORY_DATA = `
 You are the Speedial local directory assistant. You help people find local businesses and services in the area.
 Here is the directory information you can answer questions about:
@@ -29,9 +23,6 @@ Always be friendly and helpful. If someone asks for a service, give them the nam
 If you don't have the information they need, apologize and suggest they call our main number.
 `;
 
-// ============================================
-// WEBHOOK VERIFICATION (required by Meta)
-// ============================================
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
@@ -44,9 +35,6 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-// ============================================
-// RECEIVE & REPLY TO WHATSAPP MESSAGES
-// ============================================
 app.post("/webhook", async (req, res) => {
   try {
     const body = req.body;
@@ -61,7 +49,6 @@ app.post("/webhook", async (req, res) => {
 
         console.log(`Message from ${userPhone}: ${userMessage}`);
 
-        // Ask Claude for an answer
         const claudeResponse = await axios.post(
           "https://api.anthropic.com/v1/messages",
           {
@@ -81,7 +68,6 @@ app.post("/webhook", async (req, res) => {
 
         const reply = claudeResponse.data.content[0].text;
 
-        // Send reply back to WhatsApp
         await axios.post(
           `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
           {
@@ -107,9 +93,6 @@ app.post("/webhook", async (req, res) => {
   }
 });
 
-// ============================================
-// START SERVER
-// ============================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Speedial bot is running on port ${PORT}`);
