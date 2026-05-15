@@ -69,7 +69,7 @@ app.post("/webhook", async (req, res) => {
         const reply = claudeResponse.data.content[0].text;
 
         await axios.post(
-          `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
+          `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
           {
             messaging_product: "whatsapp",
             to: userPhone,
