@@ -5,7 +5,7 @@ app.use(express.json());
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
-const PHONE_NUMBER_ID = "1185305807988713";
+const PHONE_NUMBER_ID = "1070393639500675";
 const VERIFY_TOKEN = "speedial123";
 
 console.log("CLAUDE_API_KEY set:", !!CLAUDE_API_KEY);
