@@ -8,14 +8,12 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = "1185305807988713";
 const VERIFY_TOKEN = "speedial123";
 
-// Log env vars on startup (masked)
 console.log("CLAUDE_API_KEY set:", !!CLAUDE_API_KEY);
 console.log("WHATSAPP_TOKEN set:", !!WHATSAPP_TOKEN);
-console.log("WHATSAPP_TOKEN preview:", WHATSAPP_TOKEN ? WHATSAPP_TOKEN.substring(0, 20) + "..." : "NOT SET");
 
-const DIRECTORY_DATA = `You are the Speedial local directory assistant for the Linden, NJ and surrounding areas community. You help people find local businesses, services, doctors, community resources, and more.
+const DIRECTORY_DATA = `You are the Speedial local directory assistant for the Linden, NJ and surrounding areas community. You help people find local businesses, services, doctors, community resources, and community members.
 
-When someone asks for a service or business, search the directory below and provide the name, phone number, and address if available. Be friendly and helpful. If multiple options exist, list them all. If you do not have what they need, apologize and suggest they call the main Speedial number.
+When someone asks for a service, business, or person, search the directory below and provide the name, phone number, and address if available. Be friendly and helpful. If multiple options exist, list them all. If you do not have what they need, apologize and suggest they call the main Speedial number.
 
 DIRECTORY LISTINGS:
 - ABA [ABA]: Tel 718-489-9844
@@ -834,6 +832,640 @@ DIRECTORY LISTINGS:
 - חברים [Emergency Numbers]: Tel 908-777-1119
 - הצלה [Emergency Numbers]: Tel 908-800-9200
 - Police/ Fire [Emergency Numbers]: Tel 911
+- Title Mr Name & Mrs Name Last Name: Address: Street Address Unit Unit, City, State Zip, Home: Home Number, Mr Name Cell: Mr Cell, Mrs Name Cell: Mrs Cell
+- Mr. & Mrs. Tzvi Dov & Chaya Fradel Abramovitz: Address: 304 Floral St, Roselle, NJ 07203, Tzvi Dov Cell: 347-404-8680, Chaya Fradel Cell: 646-509-4954
+- Mr. & Mrs. Meir & Faigele Adler: Address: 140 Lexington Ave, Linden, NJ 07036, Meir Cell: 347-881-1771, Faigele Cell: 347-986-0730
+- Mr. & Mrs. Motty & Blimy Adler: Address: 24 Elmwood Ter, Linden, NJ 07036, Home: 718-851-4030, Motty Cell: 917-319-9565, Blimy Cell: 718-938-9527
+- Mr. & Mrs. Yoel & Shlomtzy Adler: Address: 530 Washington Ave, Roselle, NJ 07203, Home: 718-853-3238, Yoel Cell: 347-831-4653, Shlomtzy Cell: 347-786-4134
+- Mr. & Mrs. Leiby & Malky Appel: Address: 1601 N Stiles St, Linden, NJ 07036, Home: 845-794-2523, Leiby Cell: 347-263-4005, Malky Cell: 917-676-8645
+- Mr. & Mrs. Moshe & Ruchy Appel: Address: 220 Morristown Rd, Linden, NJ 07036, Moshe Cell: 347-840-2353, Ruchy Cell: 347-486-1665
+- Mr. & Mrs. Meir & Rochel Apter: Address: 518 W 7th Ave, Roselle, NJ 07203, Meir Cell: 845-499-9387, Rochel Cell: 917-309-6359
+- Mr. & Mrs. Mendy & Raizy Aronowitz: Address: 59 Edgewood Rd., Linden, New Jersey 07036, Mendy Cell: 201-436-0610, Raizy Cell: 845-548-0136
+- Rabbi & Reb. Nuson Duvid & Chumie Aschkenasy: Address: 968 Stacy Pl, Rahway, NJ 07065, Home: 845-426-5334, Nuson Duvid Cell: 845-538-3127, Chumie Cell: 845-499-5564
+- Rabbi & Mrs. Yakov & Yocheved Aschkenasy: Address: 1118 Fedirko Ct, Linden, NJ 07036, Home: 718-853-3334, Yakov Cell: 347-585-8074, Yocheved Cell: 347-675-5725
+- Rabbi & Mrs. Yoel Mendel & Libby Ashkenazi: Address: 508 W. Elm St., Linden, NJ 07036, Home: 718-971-5149, Yoel Mendel Cell: 718-781-0408, Libby Cell: 917-586-6672
+- Mr. & Mrs. Aaron & Faigy Ausch: Address: 2745 Wickersham Ave, Linden, NJ 07036, Home: 908-925-1237, Aaron Cell: 917-627-5638, Faigy Cell: 917-960-0122
+- Rabbi & Mrs. Shmiel Zev & Goldy Ausch: Address: 128 Thelma Ter., Linden, NJ 07036, Home: 908-587-5271, Shmiel Zev Cell: 917-226-4382, Goldy Cell: 347-527-0608
+- Mr. & Mrs. Shimon & Shaindy Austerlitz: Address: 11 Raritan Rd., Linden, NJ 07036, Home: 718-436-0147, Shimon Cell: 845-642-8352, Shaindy Cell: 347-263-2079
+- Rabbi & Reb. Chaim Yitzchok & Hindy Babad: Address: 2515 Verona Ave., Linden, NJ 07036, Home: 718-972-4594, Chaim Yitzchok Cell: 917-586-5288, Hindy Cell: 347-585-4997
+- Mr. & Mrs. Shea & Chana Pessy Babad: Address: 2401 Orchard Ter., Linden, NJ 07036, Home: 718-438-4175, Shea Cell: 347-797-8510, Chana Pessy Cell: 347-243-5986
+- Mr. & Mrs. Ahron Nachmen & Shainy Babad: Address: 541 Winthrop Rd., Union, NJ 07083, Home: 646-708-4074, Ahron Nachmen Cell: 347-563-4592, Shainy Cell: 845-376-0510
+- Mr. & Mrs. Alexander Usher & Udel Hena Babad: Address: 131 Harvard Rd, Linden, NJ 07036, Home: 718-903-4161, Alexander Usher Cell: 929-287-2747, Udel Hena Cell: 347-768-2881
+- Mr. & Mrs. Michoel & Hindy Bakon: Address: 42 Gesner St., Linden, NJ 07036, Home: 908-925-5756, Michoel Cell: 929-276-5578, Hindy Cell: 718-216-4954
+- Mr. & Mrs. Sruly & Miriam Barber: Address: 241 Elmwood Ter., Linden, NJ 07036, Home: 908-486-7850, Sruly Cell: 917-396-9552, Miriam Cell: 347-551-1378
+- Mr. & Mrs. Benzion Elimelach & Baily Baron: Address: 39 Princeton Rd., Linden, NJ 07036, Benzion Elimelach Cell: 347-452-8659, Baily Cell: 347-907-2435
+- Mr. & Mrs. Chaim Reuven & Esty Bauer: Address: 54 Melrose Ter., Linden, NJ 07036, Home: 908-808-4030, Chaim Reuven Cell: 347-633-0756, Esty Cell: 347-457-0302
+- Mr. & Mrs. Shulem & Breindy Baum: Address: 445 Morristown Rd,, Linden, NJ 07036, Shulem Cell: 347-782-4981, Breindy Cell: 929-434-7152
+- Mr. & Mrs. Naftali & Sury Baumohl: Address: 226 Princeton Rd., Linden, NJ 07036, Home: 718-436-3238, Naftali Cell: 347-939-9291, Sury Cell: 347-678-5306
+- Mr. & Mrs. Eli & Sura Baily Beigel: Address: 624 Academy Ter., Linden, NJ 07036, Home: 718-871-0502, Eli Cell: 347-515-7382, Sura Baily Cell: 646-334-1484
+- Mr. & Mrs. Mordche & Malky Beigel: Address: 313 Birchwood Rd., Linden, NJ 07036, Home: 908-486-0269, Mordche Cell: 917-652-1427, Malky Cell: 929-295-3357
+- Mr. Alter &  Berger: Address: 332 Valley Rd., Clark, NJ 07066, Alter Cell: 718-781-4206
+- Mr. & Mrs. Chaim Meir & Devoiry Berkovitz: Address: 8 Lucien Pl., Linden, NJ 07036, Home: 908-486-1832, Chaim Meir Cell: 718-683-4099, Devoiry Cell: 347-633-3018
+- Mr. & Mrs. Mordecha & Shaindy Berkowitz: Address: 2205 Dewitt Ter, Linden, NJ 07036, Mordecha Cell: 929-215-2766, Shaindy Cell: 917-435-4262
+- Mr. & Mrs. Benzion & Sara Devorah Bernstein: Address: 418 Princeton Rd., Linden, NJ 07036, Benzion Cell: 718-930-7486, Sara Devorah Cell: 917-635-2235
+- Mr. & Mrs. Meshilim & Yitty Bick: Address: 828 Miltonia Street, Linden, NJ 07036, Home: 718-435-0680, Meshilim Cell: 845-274-4870, Yitty Cell: 718-751-6663
+- Rabbi & Mrs. Yanky & Devoiry Biderman: Address: 112 Rosewood Ter., Linden, NJ 07036, Home: 908-925-0702, Yanky Cell: 718-419-8394, Devoiry Cell: 347-666-9359
+- Mr. & Mrs. Burich Avrum & Rivky Bindiger: Address: 2616 Orchard Ter., Linden, NJ 07036, Home: 718-851-1048, Burich Avrum Cell: 718-644-1900, Rivky Cell: 718-791-9827
+- Mr. & Mrs. Chezkel & Chumy Blackman: Address: 59 Edgewood Rd., Linden, NJ 07036, Home: 732-391-9763, Chezkel Cell: 917-670-7649, Chumy Cell: 845-826-6651
+- Mr. & Mrs. Benzion Shulem & Ruki Blau: Address: 229 Academy Ter, Linden, NJ 07036, Benzion Shulem Cell: 917-322-1411, Ruki Cell: 917-971-8595
+- Mr. & Mrs. Shloime Zalmen & Sara Rivky Blau: Address: 1121 Karen Ter, Linden, NJ 07036, Home: 718-854-0075, Shloime Zalmen Cell: 917-586-4081, Sara Rivky Cell: 347-764-8311
+- Mr. & Mrs. Yitzchok & Sara'la Block: Address: 693 Salem Rd, Union, NJ 07083, Home: 908-206-8783, Yitzchok Cell: 347-424-6245, Sara'la Cell: 929-229-9454
+- Mr. & Mrs. Eliezer & Devoiry Blum: Address: 60 Swarthmore Rd, Linden, NJ 07036, Home: 908-925-1965, Eliezer Cell: 848-221-0905, Devoiry Cell: 917-407-6439
+- Mr. & Mrs. Menachem Mendel & Rina Blumenberg: Address: 1114 Orchard Ter., LINDEN, New Jersey 07036, Menachem Mendel Cell: 917-936-6102, Rina Cell: 908-733-0633
+- Mr. & Mrs. Pinchus Duvid & Chaya Blimy Blumenfeld: Address: 2506 Orchard Terrace, Linden, NJ 07036, Pinchus Duvid Cell: 718-433-8058, Chaya Blimy Cell: 646-942-2980
+- Mr. & Mrs. Shmiel Mordche & Chavy Bochner: Address: 630 Rosewood Ter, Linden, NJ 07036, Home: 908-368-0024, Shmiel Mordche Cell: 347-793-5927, Chavy Cell: 929-283-0192
+- Mr. & Mrs. Yossi & Chana Blima Bornstein: Address: 706 Exeter Rd, Linden, NJ 07036, Home: 718-437-0223, Yossi Cell: 347-356-2681, Chana Blima Cell: 917-708-1409
+- Mr. & Mrs. Hershy & Malky Brach: Address: 22 Furber Ave, Linden, New Jersey 07036, Hershy Cell: 347-756-2649, Malky Cell: 929 545 1135
+- Mr. & Mrs. Menachem Mendel & Toby Brachfeld: Address: 1118 Debra Drive, Linden, NJ 07036, Home: 347-746-8368, Menachem Mendel Cell: 718-669-4994, Toby Cell: 718-930-7971
+- Mr. & Mrs. Sender & Frady Brachfeld: Address: 705 Summit Street, Linden, NJ 07036, Home: 718-438-1757, Sender Cell: 718-475-8406, Frady Cell: 718-475-0298
+- Mr. & Mrs. Ari & Perel Rivky Brailofsky: Address: 1608 Cornell Drive, Linden, NJ 07036, Home: 908-486-0727, Ari Cell: 845-242-0924, Perel Rivky Cell: 347-870-4367
+- Mr. & Mrs. Duvid Yehuda & Basha Gitty Brailofsky: Address: 1600 Lenape Road, Linden, NJ 07036, Duvid Yehuda Cell: 929-454-3981, Basha Gitty Cell: 347-241-1303
+- Mr. & Mrs. Mordechai & Ruchy Brandmark: Address: 220 Robbinwood Ter, Linden, NJ , Home: 718-871-5763, Mordechai Cell: 347-603-2499, Ruchy Cell: 347-432-3316
+- Mr. & Mrs. Shia & Rivky Brandwein: Address: 363 Plymouth Rd, Union, NJ 07083, Home: 718-851-1834, Shia Cell: 929-326-5585, Rivky Cell: 347-786-4774
+- Mr. & Mrs. Sender & Hindy Braun: Address: 609 W Elm Street, Linden, NJ 07036, Sender Cell: 845-587-5062, Hindy Cell: 917-521-9546
+- Mr. & Mrs. Moshe & Miriam Raizy Braunfeld: Address: 35 Princeton Road, Linden, NJ 07036, Home: 718-853-3171, Moshe Cell: 347-563-6641, Miriam Raizy Cell: 917-751-1321
+- Mr. & Mrs. Chesky & Chany Braver: Address: 699 Winchester Ave, Union, NJ 07038, Chesky Cell: 347-446-5601, Chany Cell: 347-404-8902
+- Mr. & Mrs. Shlomie & Devorala Braver: Address: 575 Robinson Terrace, Union, NJ 07083, Home: 718-438-4515, Shlomie Cell: 718-288-3757, Devorala Cell: 908-202-3319
+- Mr. & Mrs. Yakov & Udy Bretter: Address: 416 W. 4 Avenue, Roselle, NJ 07203, Home: 718-851-0649, Yakov Cell: 347-988-2852, Udy Cell: 929-214-0220
+- Mrs.  & Faigy Brief: Address: 426 Amherst Ter, Linden, NJ 07036, Faigy Cell: 917-652-2814
+- Mr. & Mrs. Naftuli Zvi & Ruchele Bronner: Address: 519 Winthrop Road, Union, NJ 07083, Home: 908-258-8836, Naftuli Zvi Cell: 347-432-7639, Ruchele Cell: 718-930-1400
+- Mr. & Mrs. Meilach Yisroel & Chana Ruchy Brown: Address: 480 Brookdale Dr, Union, NJ 07083, Home: 718-851-0364, Meilach Yisroel Cell: 347-308-3291, Chana Ruchy Cell: 646-634-8924
+- Mr. & Mrs. Yossi & Esther Brull: Address: 614 Rosewood Ter, Linden, NJ 07036, Home: 718-384-0353, Yossi Cell: 347-587-0713, Esther Cell: 347-666-3649
+- Mr. & Mrs. Hirsh Meilech & Gittel Raizy Brull: Address: 1916 Verona Avenue, Linden, NJ 07036, Home: 908-486-1898, Hirsh Meilech Cell: 347-546-3231, Gittel Raizy Cell: 347-631-3527
+- Mr. & Mrs. Ben Zion Eliezer & Rivky Brunner: Address: 1300 Avon Place, Linden, NJ 07036, Ben Zion Eliezer Cell: 718-781-6523, Rivky Cell: 929-545-3000
+- Mr. & Mrs. Levi Yitzchok & Esther Miriam Brunner: Address: 724 Willick Rd, Linden, NJ 07036, Home: 908 486 1461, Levi Yitzchok Cell: 646-341-7330, Esther Miriam Cell: 929-561-1287
+- Mr. & Mrs. Efraim & Pessy Censor: Address: 1642 Lenape Road, Linden, NJ 07036, Home: 848-350-0442, Efraim Cell: 917-968-8472, Pessy Cell: 347-243-6032
+- Mr. & Mrs. Ahron Daniel & Gitty Cziment: Address: 2013 Orchard Terrace, Linden, NJ 07036, Ahron Daniel Cell: 929-475-5252, Gitty Cell: 347-623-4511
+- Mr. & Mrs. Elyokim & Yitty Cziment: Address: 1701 Orchard Terrace, Linden, NJ 07036, Home: 908-925-1615, Elyokim Cell: 917-806-7079, Yitty Cell: 347-986-7191
+- Mr. & Mrs. Mordechai & Hudy Cziment: Address: 622 Elmwood Ter, Linden, NJ 07036, Mordechai Cell: 845-570-1045, Hudy Cell: 917-696-3828
+- Mr. & Mrs. Yakkov H & Esty Czin: Address: 2201 N Wood Avenue (corner Elmwood), Linden, NJ 07036, Home: 908-486-0201, Yakkov H Cell: 347-623-5486, Esty Cell: 347-263-4792
+- Mr. & Mrs. Avrumi & Nisel Leah Danziger: Address: 14 Rose Terrace, Clark, NJ 07066, Home: 718-435-2578, Avrumi Cell: 917-685-5913, Nisel Leah Cell: 347-790-4610
+- Mr. & Mrs. Shloimy & Pesha Goldy Daskal: Address: 2202 Dewitt Terrace, Linden, NJ 07036, Home: 718-436-1482, Shloimy Cell: 646-634-1301, Pesha Goldy Cell: 347-528-6488
+- Mr. & Mrs. Benzion & Miriam Davidowitz: Address: 55 Rosewood Ter, Linden, NJ 07036, Home: 908-925-1380, Benzion Cell: 347-375-5318, Miriam Cell: 917-588-7591
+- Mr. & Mrs. Pinchus Elimeilach & Rivky Dembitzer: Address: 224 W 7th Ave, Roselle, NJ 07203, Home: 718-438-4867, Pinchus Elimeilach Cell: 718-404-3174, Rivky Cell: 347-554-1167
+- Mr. & Mrs. Yanky & Yitty Dermer: Address: 318 Elmwood Ter, Linden, NJ 07036, Yanky Cell: 718-218-3747, Yitty Cell: 917-426-1844
+- Mr. & Mrs. Avrum Shulem & Rivky Deutsch: Address: 1110 Fedirko Ct, Linden, NJ 07036, Home: 718-854-3212, Avrum Shulem Cell: 917-202-4682, Rivky Cell: 929-613-9229
+- Mr. & Mrs. Duvid & Devoiry Deutsch: Address: 930 Orchard Ter, Linden, NJ 07036, Home: 908-372-2262, Duvid Cell: 917-974-2120, Devoiry Cell: 347-785-7544
+- Mr. & Mrs. Yoel & S. Miri Deutsch: Address: 727 Dewitt St, Linden, NJ 07036, Yoel Cell: 347-486-0254, S. Miri Cell: 347-845-8496
+- Mr. & Mrs. Naftula & Miriam Devries: Address: 217 Swarthmore Rd, Linden, NJ 07036, Home: 718-437-2944, Naftula Cell: 917-803-8020, Miriam Cell: 347-382-5145
+- Mr. & Mrs. Gershon & Blimie Doppelt: Address: 1226 Crescent Ave, Roselle, NJ 07203, Home: 718-436-5053, Gershon Cell: 917-635-2242, Blimie Cell: 718-926-8456
+- Mr. & Mrs. Chaim Meir & Bryna Doppelt: Address: 1330 Shaffer Ave, Roselle, NJ 07203, Chaim Meir Cell: 845-304-7310, Bryna Cell: 718-314-9663
+- Mr. & Mrs. Duvid & Chumy Doppelt: Address: 1706 Orchard Ter, Linden, NJ 07036, Home: 718-435-2285 / 908-620-3936, Duvid Cell: 347-243-3048, Chumy Cell: 347-678-7141
+- Mr. & Mrs. Yoel & Baily Drezdner: Address: 320 Academy Ter, Linden, NJ 07036, Yoel Cell: 212-518-8361, Baily Cell: 347-461-1617
+- Mr. & Mrs. Yanky & Perel Ehrenfeld: Address: 1416  Prospect Dr, Linden, NJ 07036, Yanky Cell: 347-930-7990, Perel Cell: 646-937-2988
+- Rabbi & Mrs. Hersh Meilech & Chaya Ruchy Eichenstein: Address: 611 Rosewood Ter, Linden, NJ 07036, Home: 718-851-1215, Hersh Meilech Cell: 347-461-4933, Chaya Ruchy Cell: 347-786-4650
+- Mr. & Mrs. Chaim & Roizy Eidelstein: Address: 1203 Summit Ter, Linden, NJ 07036, Home: 718-637-3426, Chaim Cell: 917-435-7043, Roizy Cell: 347-909-0332
+- Mr. & Mrs. Joel & Libby Eidlisz: Address: 2701 Orchard Ter, Linden, NJ 07036, Home: 718-384-4950, Joel Cell: 347-512-2902, Libby Cell: 347-512-6154
+- Rabbi & Mrs. Mendel & Hinda Tzirel Eiger: Address: 1711 Orchard Ter, Linden, NJ 07036, Mendel Cell: 347-907-3707, Hinda Tzirel Cell: 718-232-2178
+- Rabbi & Mrs. Leibel & Frimy Eiger: Address: 546 W 7th Ave, Roselle, NJ 07203, Leibel Cell: 516-968-1902, Frimy Cell: 929-345-0523
+- Mr. & Mrs. Chaim Meir & Rivky Einhorn: Address: 212 Edgewood Rd, Linden, NJ 07036, Home: 718-633-0756, Chaim Meir Cell: 718-913-9641, Rivky Cell: 718-913-9642
+- Mr. & Mrs. Leibish & Shiffy Einhorn: Address: 1611 Cornell Dr, Linden, NJ 07036, Home: 718-851-1231, Leibish Cell: 718-290-4884, Shiffy Cell: 929-420-1295
+- Mr. & Mrs. Yidel & Eidel Leah Einhorn: Address: 606 Rosewood Ter, Linden, NJ 07036, Home: 973-936-4452, Yidel Cell: 347-816-0758, Eidel Leah Cell: 347-907-0187
+- Mr. & Mrs. Zevy & Gitty Einhorn: Address: 729 Erudo St, Linden, NJ , Zevy Cell: 845-422-1940, Gitty Cell: 917-685-7467
+- Mr. & Mrs. Aron Yitzchok & Miriam Tzurty Eisenberg: Address: 376 Wallingford Ter, Union, NJ 07083, Aron Yitzchok Cell: 347-314-4518, Miriam Tzurty Cell: 917-652-9599
+- Mr. & Mrs. Zalmen Leib & Reizy Eisenberger: Address: 158 W Sumner Ave, Roselle Park, NJ 07204, Zalmen Leib Cell: 718-644-9935, Reizy Cell: 718-689-2463
+- Mr. & Mrs. Benzion & Shaindy Elias: Address: 421 Fairway Rd, Linden, NJ , Home: 908-808-4021, Benzion Cell: 347-452-9692, Shaindy Cell: 718-753-0141
+- Mr. & Mrs. Chesky & Chaya Tzurty Elias: Address: 814 Laurita St, Linden, NJ , Home: 718-851-0028, Chesky Cell: 347-304-1510, Chaya Tzurty Cell: 347-388-6880
+- Mr. & Mrs. Eli & Soshy Elias: Address: 716 Princeton Rd, Linden, NJ 07036, Home: 718-851-2927, Eli Cell: 917-982-1585, Soshy Cell: 718-753-8131
+- Mr. & Mrs. Naftuli Tzvi & Bassy Elias: Address: 622 Princeton Rd, Linden, NJ , Home: 718-436-0385, Naftuli Tzvi Cell: 347-461-0712, Bassy Cell: 347-633-4377
+- Mr. & Mrs. Shmily & Chumy Elias: Address: 2508 Summit Ter, Linden, NJ , Home: 848-319-0657, Shmily Cell: 347-988-4660, Chumy Cell: 345-541-0512
+- Mr. & Mrs. Yosef Duvid & Miri Elias: Address: 1525 Cornell Dr, Linden, NJ , Home: 908-486-0714, Yosef Duvid Cell: 347-742-5514, Miri Cell: 347-743-0152
+- Mr. & Mrs. Mendy & Pia Elias: Address: 425 Fairway Rd, Linden, NJ 07036, Home: 718-853-7060, Mendy Cell: 347-522-5516, Pia Cell: 347-607-7519
+- Mr. & Mrs. Mendel & Malky Engel: Address: 702 Kent Pl, Linden, New Jersey 07036, Mendel Cell: 347-831-1874, Malky Cell: 718-938-4278
+- Mr. Moshe &  Engel: Address: 910 Princeton Rd, Linden, NJ , Home: 908-925-9326, Moshe Cell: 908-884-8691
+- Mr. & Mrs. Sruly & Suri Engel: Address: 426 Rosewood Ter, Linden, NJ , Home: 908-486-7287, Sruly Cell: 347-969-2987
+- Mr. & Mrs. Meir Tzvi & Suri Estreicher: Address: 717 Summit Street, Linden, NJ 07036, Home: 908-925-0252, Meir Tzvi Cell: 929-213-5057, Suri Cell: 347-937-0048
+- Mr. & Mrs. Shliome & Bruchy Falkowitz: Address: 408 W. Scott Ave, Rahway, NJ 07065, Home: 732-943-7879, Shliome Cell: 718-483-1694, Bruchy Cell: 347-675-2939
+- Mr. & Mrs. Shloma Menashe & Leah Gitty Falkowitz: Address: 347 Rosewood Ter, Linden, NJ , Shloma Menashe Cell: 646-668-1196, Leah Gitty Cell: 347-675-1349
+- Mr. & Mrs. Duvid & Michal Farkas: Address: 821 Laurita St, Linden, NJ , Duvid Cell: 347-489-1911, Michal Cell: 718-744-8994
+- Mr. & Mrs. Lipa & Hindy Fasten: Address: 904 Kent Pl, Linden, NJ , Lipa Cell: 718-576-9550, Hindy Cell: 347-985-0948
+- Mr. & Mrs. Nissin & Esther Chana Fasten: Address: 2723 Myrtle Ter, Linden, NJ 07036, Home: 718-871-3997, Nissin Cell: 917-676-0287, Esther Chana Cell: 347-452-7751
+- Mr. & Mrs. Usher Zeilig & Yides Feuerwerker: Address: 37 Furber Ave, Linden, NJ 07036, Usher Zeilig Cell: 718-450-0993, Yides Cell: 929-283-0058
+- Mr. & Mrs. Nechemia & Ruchela Feuerwerker: Address: 815 Clark St, Linden, NJ , Nechemia Cell: 347-986-6863, Ruchela Cell: 347-407-0777
+- Mr. & Mrs. Mendy & Sara Leah Fisch: Address: 115 E Gibbons St, Linden, NJ , Mendy Cell: 845-499-3597, Sara Leah Cell: 908-368-7553
+- Mr. & Mrs. Moshe & Peri Fisch: Address: 7 Gresser Ave, Linden, NJ , Home: 908-525-3795, Peri Cell: 347-383-7720
+- Mr. & Mrs. Chaim & Faigy Fischer: Address: 109 Rosewood Ter, Linden, NJ , Chaim Cell: 646-463-9027, Faigy Cell: 347-863-2551
+- Mr. & Mrs. Gershon & Miriam Fischer: Address: 221 Acadamy Terrace, Linden, NJ 07036, Home: 718-259-6465, Gershon Cell: 718-300-9033, Miriam Cell: 646-239-9471
+- Mr. & Mrs. Yitzchok Yoel & Miriam Leah Fischer: Address: 836 Lindegar Street, Linden, NJ 07036, Yitzchok Yoel Cell: 929-231-6535, Miriam Leah Cell: 908-217-6433
+- Mr. & Mrs. Amrom & Tzurty Fischman: Address: 144 Morristown Rd, Linden, NJ , Home: 908-486-1640, Amrom Cell: 347-330-5421, Tzurty Cell: 646-645-7542
+- Mr. & Mrs. Yoel Nissanal & Miriam Fishbein: Address: 715 Riverbend Dr, Linden, NJ 07036, Home: 718-923-1020, Yoel Nissanal Cell: 347-309-1738, Miriam Cell: 718-490-5864
+- Mr. & Mrs. Shaya & Yachet Fishman: Address: 519 Raritan Rd, Linden, NJ , Home: 718-435-2350, Shaya Cell: 347-546-8818, Yachet Cell: 347-546-8968
+- Mr. & Mrs. Avrum & Sara Fixler: Address: 220 Melrose Ter, Linden, NJ , Avrum Cell: 917-662-1082, Sara Cell: 646-322-5828
+- Mr. & Mrs. Yisucher Dov & Yocheved Fixler: Address: 217 Gesner St, Linden, New Jersey 07036, Yisucher Dov Cell: 929-844-8140, Yocheved Cell: 917-936-9839
+- Mr. & Mrs. Yoel & Zlate Fleischman: Address: 220 Hillside Rd, Linden, NJ 07036, Home: 718-522-7459, Yoel Cell: 347-737-8165, Zlate Cell: 929-454-7793
+- Mr. & Mrs. Ahron & Libby Flohr: Address: 1143 Darby Lane, Union, NJ 07083, Ahron Cell: 845-608-9306, Libby Cell: 347-432-5522
+- Rabbi & Mrs. Yosef Duvid & Toby Flohr: Address: 480 Robins St, Roselle, NJ , Home: 908-936-8118, Yosef Duvid Cell: 917-474-4948, Toby Cell: 347-683-5343
+- Mr. & Mrs. Chaim & Rochel Leah Fogel: Address: 446 Maple Ave, Linden, NJ , Chaim Cell: 929-236-6918, Rochel Leah Cell: 347-461-1182
+- Mr. & Mrs. Menachem Nuchem & Esty Fogel: Address: 1302 Summit Ter, Linden, NJ , Home: 908-525-3940, Menachem Nuchem Cell: 347-893-5108, Esty Cell: 718-887-1979
+- Mr. & Mrs. Ahron & Ruchy Fogel: Address: 222 E. Elm St, Linden, NJ 07036, Home: 718-436-1368, Ahron Cell: 917-417-5477, Ruchy Cell: 845-659-7034
+- Mr. & Mrs. Yosef Shea & Matty Folger: Address: 127 Swarthmore Rd, Linden, NJ 07036, Yosef Shea Cell: 646-637-6118, Matty Cell: 917-627-8945
+- Rabbi & Mrs. Shulim Duvid & Freidy Folger: Address: 711 Beechwood Rd, Linden, NJ 07036, Home: 718-853-7716, Shulim Duvid Cell: 347-374-0838, Freidy Cell: 347-423-3292
+- Mr. & Mrs. Yosef Moshe & Leah'la Follman: Address: 614 Colonial Ave, Union, NJ 07083, Home: 908-349-8926, Yosef Moshe Cell: 347-678-0944, Leah'la Cell: 718-759-8930
+- Mr. & Mrs. Yanky & Sara Leah Follman: Address: 1515 Dewitt Ter, Linden, NJ 07036, Home: 718-234-2340, Yanky Cell: 718-306-9535, Sara Leah Cell: 718-501-2580
+- Mr. & Mrs. Avrohm Yoel & Malky Framovitz: Address: 393 Borroughs Terrace, Union, NJ 07083, Avrohm Yoel Cell: 347-452-3881, Malky Cell: 347-533-0335
+- Mr. & Mrs. Luzer & Yocheved Frankel: Address: 2614 Summit Terrace, Linden, NJ 07036, Luzer Cell: 845-274-4625, Yocheved Cell: 929-813-1696
+- Mr. & Mrs. Avrum & Gitty Frankel: Address: 390 Douglas Rd, Roselle, NJ 07203, Avrum Cell: 347-416-8678, Gitty Cell: 718-854-1957
+- Rabbi & Mrs. Hershel & Esty Freund: Address: 2601 Orchard Ter, Linden, NJ 07036, Home: 718-437-1565, Hershel Cell: 347-693-1392, Esty Cell: 917-583-9285
+- Mr. & Mrs. Yanky & Esty Freund: Address: 25 Princeton Rd, Linden, NJ 07036, Home: 718-388-4019, Yanky Cell: 718-344-4747, Esty Cell: 347-228-9110
+- Mr. & Mrs. Ari & Yocheved Fried: Address: 807 Erudo St, Linden, NJ 07036, Home: 908-486-7849, Ari Cell: 347-362-4768, Yocheved Cell: 718-799-4777
+- Mr. & Mrs. Menachem Mendel & Yachet Fried: Address: 2311 Desisto Dr, Rahway, NJ 07065, Home: 732-943-7055, Menachem Mendel Cell: 347-513-7793, Yachet Cell: 347-374-0070
+- Mr. & Mrs. Oizer & Devoiry Fried: Address: 70 Raritan Rd, Linden, NJ 07036, Home: 908-486-1269, Devoiry Cell: 917-474-7701
+- Rabbi & Mrs. Harav Shulem & Tzippy Friedlander: Address: 1308 Thelma Ter, Linden, NJ 07036, Harav Shulem Cell: 718-207-4996, Tzippy Cell: 718-501-4136
+- Mr. & Mrs. Naftuli & Blimie Friedlander: Address: 816 Hamilton Pl, Roselle Park, NJ 07204, Home: 718-851-1382, Naftuli Cell: 347-675-7259, Blimie Cell: 347-845-4140
+- Rabbi & Mrs. Yisroel & Shaindy Friedlander: Address: 450 Inwood Rd, Linden, NJ 07036, Home: 718-633-1897, Yisroel Cell: 347- 546-2059, Shaindy Cell: 347-546-8233
+- Mr. & Mrs. Leiby & Faigy Friedman: Address: 2244 Price St, Rahway, NJ 07065, Leiby Cell: 917-855-5618, Faigy Cell: 929-275-5909
+- Mr. & Mrs. Meilech & Esther Ruchy Friedman: Address: 619 Rosewood Ter, Linden, NJ 07036, Esther Ruchy Cell: 347-893-9102
+- Mr. & Mrs. Shauly & Yitty Friedman: Address: 231 Yale Ter, Linden, NJ 07036, Home: 908-718-2345, Shauly Cell: 347-683-0205, Yitty Cell: 347-309-1219
+- Mr. & Mrs. Shmelka & Meira Friedman: Address: 1265 Dovs Court, Linden, NJ 07036, Shmelka Cell: 646-302-5000, Meira Cell: 917-696-6065
+- Mr. & Mrs. Yechezkel & Sheindy Friedman: Address: 1031 Summit Ter, Linden, NJ 07036, Home: 908-925-1981, Yechezkel Cell: 917-939-1090, Sheindy Cell: 347-232-0909
+- Mr. Shloma Zalmen &  Friedman: Address: 125 Wyoming Ave, Union, NJ 07083, Shloma Zalmen Cell: 347-585-5706
+- Mr. & Mrs. Heshy & Toby Friedman: Address: 61 Furber Ave, Linden, New Jersey 07036, Home: 908-925-0384, Heshy Cell: 347-957-5796, Toby Cell: 929-454-4406
+- Mr. & Mrs. Usher & Childa Frisch: Address: 300 Rosewood Ter, Linden, NJ 07036, Home: 718-232-2715, Usher Cell: 718-954-0390
+- Mr. & Mrs. Yonah & Frimy Frischman: Address: 4 Melrose Ter, Linden, NJ 07036, Yonah Cell: 845-641-4382, Frimy Cell: 347-578-5264
+- Mr. & Mrs. Yitzchok & Yenty Fruend: Address: 904 Seymour Ave, Linden, NJ 07036, Home: 718-633-4182, Yitzchok Cell: 917-974-7459, Yenty Cell: 917-635-4614
+- Mr. & Mrs. Avrohom Shimon & Sura'la Fuhrer: Address: 324 Washington Ave, Union, NJ 07083, Home: 718-435-1934, Avrohom Shimon Cell: 347-232-9616, Sura'la Cell: 347-668-7840
+- Mr. & Mrs. Moshe & Malky Fuhrer: Address: 137 Harvard Rd, Linden, NJ 07036, Home: 732-221-9378, Moshe Cell: 347-930-9061, Malky Cell: 347-407-2083
+- Mr. & Mrs. Shea & Etty Fuhrer: Address: 640 Exeter Rd, Linden, NJ 07036, Home: 908-486-0460, Shea Cell: 347-486-2945, Etty Cell: 718-541-2259
+- Mr. & Mrs. Ahron Moshe & Perela Galitzky: Address: 141 W. Gibbons St, Linden, NJ 07036, Home: 718-633-2134, Ahron Moshe Cell: 917-627-7526, Perela Cell: 347-444-8377
+- Mr. & Mrs. Naftuli & Mimi Gancz: Address: 49 Rosewood Ter, Linden, NJ 07036, Home: 732-439-7349, Naftuli Cell: 917-789-4042, Mimi Cell: 347-452-0252
+- Mr. & Mrs. Shimon & Malky Gantzfried: Address: 901 Maple Ave, Linden, NJ 07036, Shimon Cell: 917-202-5652, Malky Cell: 347-533-1525
+- Mr. & Mrs. Yechiel & Leah'la Ganzfried: Address: 237 Linden Ave, Rahway, NJ 07065, Yechiel Cell: 929-417-0605, Leah'la Cell: 929-585-4415
+- Mr. & Mrs. Yosef Binyamin & Brany Ganzfried: Address: 538 Valley Rd, Clark, NJ 07066, Home: 718-853-3979, Yosef Binyamin Cell: 917-842-9230, Brany Cell: 917-843-0626
+- Mr. & Mrs. Moshe & Malky Geiger: Address: 544 Valley Rd, Clark, NJ 07066, Home: 718-851-1371, Moshe Cell: 347-628-7230, Malky Cell: 347-228-6595
+- Mr. & Mrs. Shloime & Chaya Surie Gelb: Address: 116 Swarthmore Rd, Linden, NJ 07036, Home: 718-972-2544, Shloime Cell: 347-416-1414, Chaya Surie Cell: 347-416-1400
+- Rabbi & Reb. Menachem Shulim & Rivka Geldzahler: Address: 615 Walnut St., Roselle, NJ 07203, Home: 718-336-1916, Menachem Shulim Cell: 718-749-3095, Rivka Cell: 347-988-9207
+- Rabbi & Mrs. Benzion Shloima & Leah'la Geldzhaler: Address: 632 Miner Ter, Linden, NJ 07036, Home: 917-974-0839, Benzion Shloima Cell: 347-675-6117, Leah'la Cell: 917-937-6598
+- Mr. & Mrs. Chaim Zanvel & Faigy Geldzhaler: Address: 101 Gorgean Ave, Rahway, NJ , Faigy Cell: 347-675-8587
+- Rabbi & Mrs. Lipa & Yocheved Geldzhaler: Address: 242 Linden Ave, Rahway, NJ 07065, Home: 732-499-0238, Lipa Cell: 347-633-6832, Yocheved Cell: 929-466-3019
+- Mr. & Mrs. Shulem & Roizy Geldzhaler: Address: 2612 Orchard Ter, Linden, NJ 07036, Home: 718-972-2952, Shulem Cell: 347-675-5696, Roizy Cell: 347-765-3709
+- Mr. & Mrs. Duvid Burech & Malky Geller: Address: 13 Elmwood Ter, Linden, NJ 07036, Duvid Burech Cell: 347-907-8564, Malky Cell: 347-793-0022
+- Mr. & Mrs. Eliezer Lipa & Sura'la Geller: Address: 34 Melrose Ter, Linden, NJ 07036, Home: 718-438-4034, Sura'la Cell: 718-541-6318
+- Mr. & Mrs. Naftuli & Chava Miriam Geller: Address: 1500 Summit Ter, Linden, NJ 07036, Home: 908-925-1347, Naftuli Cell: 718-687-0563, Chava Miriam Cell: 917-279-8443
+- Mr. & Mrs. Shlome & Brucha Gitty Geller: Address: 1309 Summit Ter, Linden, NJ 07036, Home: 718-438-4571, Shlome Cell: 347-461-8238, Brucha Gitty Cell: 347-351-2621
+- Mr. & Mrs. Shulem Duvid & Chaya Ruchy Geller: Address: 801 Amherst Rd, Linden, NJ 07036, Home: 908-486-1836, Shulem Duvid Cell: 917-246-7311, Chaya Ruchy Cell: 917-588-7906
+- Mr. & Mrs. Yitzchok & Shavy Geller: Address: 657 Selfmaster Pkwy, Union, NJ 07083, Home: 718-686-1658, Yitzchok Cell: 917-588-0343, Shavy Cell: 917-589-6593
+- Mr. & Mrs. Chaim Tzvi & Hindy Genger: Address: 8 Melrose Ter, Linden, NJ 07036, Chaim Tzvi Cell: 845-608-3296, Hindy Cell: 929-214-7476
+- Mr. & Mrs. Pinchas Duvid & Chaya Malky Genger: Address: 439 Elmwood Ter, Linden, NJ 07036, Home: 718-854-1421, Pinchas Duvid Cell: 347-622-6805, Chaya Malky Cell: 347-675-5740
+- Mr. & Mrs. Mordche & Gella Bina Gerlitz: Address: 14 Gesner St, Linden, NJ 07036, Home: 718-633-5759, Mordche Cell: 347-268-6902, Gella Bina Cell: 347-546-6729
+- Mr. & Mrs. Avrum Menachem & Peri German: Address: 40 Elmwood Ter, Linden, NJ 07036, Home: 718-633-1163, Avrum Menachem Cell: 917-383-7510, Peri Cell: 347-357-9997
+- Mr. & Mrs. Bentzion & Hindy Gertner: Address: 493 W 3rd Ave, Roselle, NJ 07203, Bentzion Cell: 347-229-7030, Hindy Cell: 347-609-5099
+- Mr. & Mrs. Shmuel & Chani Glancz: Address: 625 Laurita St, Linden, NJ 07036, Home: 908-486-1279, Shmuel Cell: 347-217-5247, Chani Cell: 347-731-0421
+- Mr. & Mrs. Yoel Nachmen & Mindy Glauber: Address: 224 Livingston Rd, Linden, NJ 07036, Yoel Nachmen Cell: 718-954-6076, Mindy Cell: 929-276-7911
+- Mr. & Mrs. Moshe & Chany Gluck: Address: 335 Dewitt St., Linden, NJ 07036, Home: 718-782-2587, Moshe Cell: 845-587-7539, Chany Cell: 347-693-7451
+- Mr. & Mrs. Moshe & Chavy Goland: Address: 321 Hillside Rd, Linden, NJ 07036, Home: 908-925-1467, Chavy Cell: 917-831-6273
+- Mr. & Mrs. Luzi & Malky Goldberg: Address: 117 Yale Ter, Linden, NJ 07036, Luzi Cell: 646-676-7112, Malky Cell: 917-566-9593
+- Mr. & Mrs. Moshe & Hindy Goldberg: Address: 511 Exeter Rd, Linden, NJ 07036, Home: 908-486-1423, Moshe Cell: 347-351-4275, Hindy Cell: 347-628-7202
+- Mr. & Mrs. Yecheskal Menachem & Chavy Goldberg: Address: 363 Broadwell Avenue, Union, NJ 07083, Yecheskal Menachem Cell: 845-274-7194, Chavy Cell: 845-376-6825
+- Mr. & Mrs. Moshe Mordechia & Zissy Goldberger: Address: 27 Furber Ave, Linden, NJ 07036, Home: 718-871-0329, Moshe Mordechia Cell: 347-675-3976, Zissy Cell: 347-834-3396
+- Mr. & Mrs. Kalman & Miriam Goldberger: Address: 20 Harvard Rd, Linden, NJ 07036, Home: 908-583-5637, Kalman Cell: 347-304-0900, Miriam Cell: 917-968-0460
+- Mr. & Mrs. Yosef & Leah Goldberger: Address: 2233 Ludlow St, Rahway, NJ 07065, Yosef Cell: 929-271-3389, Leah Cell: 917-982-8162
+- Mr. &Mrs. Yakov Duvid & Bassy Goldhirsch: Address: 230 Edgewood Rd, Linden, NJ 07036, Yakov Duvid Cell: 347-525-4062, Bassy Cell: 929-271-6385
+- Mr. & Mrs. Ahron & Baila Goldstein: Address: 345 Raritan Rd, Linden, NJ 07036, Home: 908-494-7798, Ahron Cell: 845-537-9054, Baila Cell: 347-977-5390
+- Mr. & Mrs. Chaim & Shiffy Goldstein: Address: 231 Thelma Ter, Linden, NJ 07036, Chaim Cell: 347-355-5028, Shiffy Cell: 347-668-0634
+- Mr. & Mrs. Motti & Yenta Goldstein: Address: 1601 Cornell Dr, Linden, NJ 07036, Home: 908-925-1382, Motti Cell: 908-510-4096, Yenta Cell: 917-803-4591
+- Mr. & Mrs. Avrum Chaim & Shaindy Gordon: Address: 622 Ercama St, Linden, NJ 07036, Home: 718-853-5256, Avrum Chaim Cell: 917-292-9375, Shaindy Cell: 347-962-9292
+- Mr. & Mrs. Efroyim & Esther Gedila Gordon: Address: 510 Exeter Rd, Linden, NJ 07036, Efroyim Cell: 929-289-0277, Esther Gedila Cell: 347-978-4612
+- Mr. & Mrs. Efroyim Tzvi & Miriam Gordon: Address: 855 Seymour Ave, Linden, NJ 07036, Home: 718-436-1932, Efroyim Tzvi Cell: 347-415-6264, Miriam Cell: 917-822-6189
+- Rabbi & Mrs. Eliezer Zusia & Gitty Gorelnik: Address: 426 Morristown Ave, Linden, NJ 07036, Eliezer Zusia Cell: 347-224-5574, Gitty Cell: 929-441-5709
+- Mr. & Mrs. Efroyim & Etty Gottheil: Address: 1177 Debra Dr, Linden, NJ 07036, Home: 718-972-0731, Efroyim Cell: 347-358-0205, Etty Cell: 347-533-2835
+- Mr. & Mrs. Ben Zion Duvid & Fraidy Gottlieb: Address: 120 Morristown Rd, Linden, NJ 07036, Home: 908-545-0727, Ben Zion Duvid Cell: 347-578-3375, Fraidy Cell: 347-907-0263
+- Mr. & Mrs. Motti & Chaya Blimy Graus: Address: 31 West Gibbons St, Linden, NJ 07036, Motti Cell: 347-683-9527, Chaya Blimy Cell: 347-977-0258
+- Mr. & Mrs. Yossi & Roizy Graus: Address: 1302 Sunnyfield Dr, Linden, NJ 07036, Home: 908-925-1075, Yossi Cell: 718-809-4573, Roizy Cell: 347-683-0328
+- Mr. & Mrs. Chaim Shlome & Esther Rochel Greenberg: Address: 612 Duquesne Ter, Union, NJ 07083, Home: 929-545-3462, Chaim Shlome Cell: 347-645-3330, Esther Rochel Cell: 347-645-4705
+- Mr. & Mrs. Naftula Meir & Baila Greenberg: Address: 582 Selfmaster Pkwy, Union, NJ 07083, Home: 718-871-0614, Naftula Meir Cell: 929-287-0429, Baila Cell: 347-404-8886
+- Mr. & Mrs. Naftuli & Perl Malky Greenfeld: Address: 906 W Henry St, Linden, NJ 07036, Naftuli Cell: 908-858-7495, Perl Malky Cell: 917-849-9391
+- Mr. & Mrs. Yanky & Dini Greenfeld: Address: 715 Elm St, Roselle Park, NJ 07204, Home: 718-782-1469, Yanky Cell: 347-415-7590, Dini Cell: 347-957-0925
+- Mr. & Mrs. Yosef Mordchia & Chavy Greenstein: Address: 1303 Summit Ter, Linden, NJ 07036, Home: 973-868-7825, Yosef Mordchia Cell: 646-860-8958, Chavy Cell: 929-441-9521
+- Mr. & Mrs. Yosef & Blimy Greenwald: Address: 34 Princeton Rd, Linden, NJ 07036, Home: 718-852-2854, Yosef Cell: 718-986-0953
+- Mr. & Mrs. Hershy & Bruchy Grodzinsky: Address: 1122 Debra Dr, Linden, NJ 07036, Home: 908-486-1596, Hershy Cell: 917-383-6171, Bruchy Cell: 718-644-9466
+- Mr. & Mrs. Ahron Shmiel & Chany Gross: Address: 263 Monticello St, Union, NJ 07083, Home: 908-851-8571, Ahron Shmiel Cell: 917-635-3916, Chany Cell: 347-768-2270
+- Mr. & Mrs. Moshe & Zissy Gross: Address: 711 Amherst Rd, Linden, NJ 07036, Moshe Cell: 347-557-9797, Zissy Cell: 917-808-8424
+- Mr. & Mrs. Moshe Yoel & Rivka Gross: Address: 1178 Debra Dr, Linden, NJ 07036, Moshe Yoel Cell: 347-844-1120, Rivka Cell: 718-576-9557
+- Mr. & Mrs. Naftuli & Tzippy Gross: Address: 816 Baldwin Ave, Linden, NJ 07036, Home: 908-955-8525, Naftuli Cell: 347-986-6339, Tzippy Cell: 917-676-4343
+- Mr. & Mrs. Yossi & Esty Gross: Address: 452 Maple Ave, Linden, NJ 07036, Yossi Cell: 917-208-1634, Esty Cell: 917-589-5717
+- Mr. & Mrs. Yikesiel Menachem &  Gross: Address: 437 Ainsworth St, Linden, NJ 07036, Yikesiel Menachem Cell: 718-675-6156,  Cell: 718-290-5544
+- Rabbi & Mrs. Mendel & Hindy Gruber: Address: 430 Middlesex Ave, Colonia, NJ 07067, Home: 908-523-8517, Mendel Cell: 718-569-8785, Hindy Cell: 845-364-1098
+- Rabbi & Mrs. Pinchos & Riki Gruber: Address: 435 Prescott Rd, Union, NJ 07083, Home: 908-364-6193, Pinchos Cell: 732-232-0655, Riki Cell: 917-635-0640
+- Mr. & Mrs. Shloimy & Gitty Gruber: Address: 715 Beechwood Rd, Linden, NJ 07036, Home: 718-232-3619, Shloimy Cell: 718-210-6477, Gitty Cell: 347-939-4874
+- Mr. & Mrs. Leiby & Gitty Grunsweig: Address: 217 Morristown Rd, Linden, NJ 07036, Home: 718-436-5891, Leiby Cell: 718-216-2951, Gitty Cell: 917-340-1676
+- Mr. & Mrs. Motty & Baila Grunwald: Address: 640 Princeton Rd, Linden, NJ 07036, Home: 908-925-0568, Baila Cell: 347-496-5963
+- Mr. & Mrs. Shlomie & Malky Grunwald: Address: 519 Dewitt St, Linden, NJ 07036, Home: 718-633-3032, Shlomie Cell: 917-275-6935, Malky Cell: 718-954-5617
+- Mr. & Mrs. Benzion & Sura'la Guttman: Address: 1649 Lenape Rd, Linden, NJ 07036, Home: 908-925-0831, Benzion Cell: 347-533-0488, Sura'la Cell: 347-382-0573
+- Mr. & Mrs. Yerachmiel Yisroel & Leah Guttman: Address: 431 Raritan Rd, Linden, NJ 07036, Leah Cell: 929-289-5426
+- Mr. & Mrs. Shia & Shaindy Guttman: Address: 628 Lafyette St, Linden, NJ 07036, Shia Cell: 347-678-0193, Shaindy Cell: 347-675-2568
+- Rabbi & Rebbitzn Yehuda Chaim &  Halberstam: Address: 433 Bailey Ave, Union, NJ 07083, Home: 718-851-6745, Yehuda Chaim Cell: 718-781-7961,  Cell: 718-781-7288
+- Rabbi & Mrs. Duvid & Chana Ruchy Halberstam: Address: 35 W Gibbons St, Linden, NJ 07036, Home: 908-925-1849, Duvid Cell: 646-830-1901, Chana Ruchy Cell: 718-437-8799
+- Rabbi & Reb. Harav Chaim Baruch & Chaya Ruchy Halberstam: Address: 382 Salem Rd, Union, NJ 07083, Harav Chaim Baruch Cell: 347-693-9151, Chaya Ruchy Cell: 917-676-5593
+- Rabbi & Mrs. Shmiel Moshe & Esther Leah'la Halberstam: Address: 367 Ward St, Union, NJ 07083, Home: 908-686-6432, Shmiel Moshe Cell: 917-687-0164, Esther Leah'la Cell: 646-369-9523
+- Rabbi & Mrs. Yoel & Chaya Malky Halberstam: Address: 253 Salem Rd, Union, NJ 07083, Home: 718-431-0861, Yoel Cell: 347-742-1136, Chaya Malky Cell: 347-742-1858
+- Mr. & Mrs. Yakov Hersh & Rivky Halberstam: Address: 265 Woodmont Rd, Union, NJ 07083, Home: 718-305-7170, Yakov Hersh Cell: 917-692-6318, Rivky Cell: 917-789-3960
+- Mr. & Mrs. Benzion & Chumy Halpern: Address: 527 Fernwood Ter, Linden, NJ 07036, Home: 908-486-1671, Chumy Cell: 347-898-5441
+- Mr. & Mrs. Boruch Avrum & Miriam Halpern: Address: 134 Elmwood Ter, Linden, NJ 07036, Home: 908-925-1438, Boruch Avrum Cell: 917-636-8135, Miriam Cell: 347-967-8177
+- Mr. & Mrs. Yisroel Meir & Mirel Halpern: Address: 345 Tucker Ave, Union, NJ 07083, Home: 443-447-8988, Yisroel Meir Cell: 347-666-8030, Mirel Cell: 347-768-1518
+- Mr. & Mrs. Nuchem & Chana Malky Halpert: Address: 851 Rayhon Ter, Rahway, NJ 07065, Nuchem Cell: 347-471-4609, Chana Malky Cell: 718-809-5963
+- Mr. & Mrs. Moshe & Tzina Hartman: Address: 2741 Dewitt Ter, Linden, NJ 07036, Home: 908-486-0943, Moshe Cell: 908-708-0472, Tzina Cell: 848-205-0301
+- Mr. & Mrs. Yisroel & Chany Hartman: Address: 313 Springfield Rd, Linden, NJ 07036, Home: 718-951-3373, Yisroel Cell: 718-986-1579, Chany Cell: 718-986-7840
+- Mr. & Mrs. Moshe & Ruchy Hartstein: Address: 342 Amherst Rd, Linden, NJ 07036, Home: 718-633-1399, Moshe Cell: 347-967-7961, Ruchy Cell: 347-446-6780
+- Mr. & Mrs. Menachem & Dina Heilbrun: Address: 315 W 4th Ave, Roselle, NJ 07203, Home: 718-435-1707, Menachem Cell: 347-534-6035, Dina Cell: 347-889-1928
+- Mr. & Mrs. Hershy & Kaily Heilpern: Address: 447 Inwood Rd, Linden, NJ 07036, Home: 908-808-9494, Hershy Cell: 845-999-4449, Kaily Cell: 347-633-1107
+- Mr. & Mrs. Amrom & Zlaty Heimfeld: Address: 1400 Orchard Ter, Linden, NJ 07036, Home: 718-436-3303, Amrom Cell: 347-314-9458, Zlaty Cell: 917-589-7454
+- Mr. & Mrs. Yisroel Aron & Miriam Blimy Henig: Address: 519 Academy Ter, Linden, NJ 07036, Home: 718-633-5292, Yisroel Aron Cell: 917-246-9591, Miriam Blimy Cell: 347-768-4644
+- Mr. & Mrs. Avrohom Shimon & Gitty Herbst: Address: 1416 Thelma Ter, Linden, NJ 07036, Home: 718-851-0312, Avrohom Shimon Cell: 917-588-3563, Gitty Cell: 347-668-0835
+- Mr. & Mrs. Shulem & Frady Herbst: Address: 901 A Dewitt St, Linden, NJ 07036, Home: 908-486-4051, Shulem Cell: 347-424-3594, Frady Cell: 347-424-7172
+- Mr. & Mrs. Yosef Ahron & Roiza Ruchy Herbst: Address: 636 Miner Ter, Linden, NJ 07036, Yosef Ahron Cell: 347-585-9429, Roiza Ruchy Cell: 347-988-9502
+- Mr. & Mrs. Ari & Miriam Yitty Herskowitz: Address: 225 Princeton Rd, Linden, NJ 07036, Ari Cell: 631-507-0642, Miriam Yitty Cell: 917-676-7919
+- Mr. & Mrs. Shraga & Rivky Herskowitz: Address: 317 Springfield Rd, Linden, NJ 07036, Home: 718-853-3216, Shraga Cell: 917-599-1365, Rivky Cell: 347-232-2188
+- Mr. & Mrs. Meilech & Gitty Hertz: Address: 819 Clark St, Linden, NJ 07036, Home: 410-375-8239, Meilech Cell: 845-461-5934, Gitty Cell: 845-527-5798
+- Mr. & Mrs. Yosef Shulem & Shaindy Herzl: Address: 521 Laurita St, Linden, NJ 07036, Home: 908-862-1205, Yosef Shulem Cell: 718-744-5015, Shaindy Cell: 848-334-5696
+- Mr. & Mrs. Yosef Chaim & Chaya Matty Hirschfeld: Address: 1655 Lenape Rd, Linden, NJ 07036, Yosef Chaim Cell: 347-889-1240, Chaya Matty Cell: 347-249-5952
+- Mr. & Mrs. Menachem & Ruchy Hirschfeld: Address: 2700 N Stiles St, Linden, NJ 07036, Home: 718-436-7078, Menachem Cell: 845-551-4740, Ruchy Cell: 347-946-4742
+- Mr. & Mrs. Yecheskal Eliezer & Chava Gittel Hirschfeld: Address: 642 Salem Rd, Union, NJ 07083, Yecheskal Eliezer Cell: 443-722-1051, Chava Gittel Cell: 443-326-9791
+- Mr. & Mrs. Chaim & Chana Hoffman: Address: 637 Erudo St, Linden, NJ 07036, Chaim Cell: 917-704-8282, Chana Cell: 646-379-0189
+- Mr. & Mrs. Aron Shmiel & Faiga Malky Hold: Address: 724 Willick Rd, Linden, NJ 07036, Home: 908-486-1461, Aron Shmiel Cell: 917-524-4342, Faiga Malky Cell: 347-964-3712
+- Mr. & Mrs. Zecharia & Tzina Honig: Address: 839 Lindegar St, Linden, NJ 07036, Home: 908-666-5460, Zecharia Cell: 347-436-5372, Tzina Cell: 718-233-7302
+- Mr. & Mrs. Avrum Chaim & Chava'la Horowitz: Address: 413 Brookside Dr, Roselle, NJ 07203, Home: 908-718-1112, Avrum Chaim Cell: 917-618-4666, Chava'la Cell: 917-771-0169
+- Rabbi & Mrs. Aron Yitzchok & Chany Horowitz: Address: 309 Hillside Rd, Linden, NJ 07036, Home: 908-486-1729, Aron Yitzchok Cell: 347-447-2632, Chany Cell: 917-698-7757
+- Mr. & Mrs. Benzion & Rikki Horowitz: Address: 473 Valley Rd, Clark, NJ 07066, Home: 347-240-4623, Benzion Cell: 347-616-8072, Rikki Cell: 917-673-8821
+- Rabbi & Mrs. Chaim Shlome & Chanie Horowitz: Address: 237 Elmwood Ter, Linden, NJ 07036, Home: 718-633-2351, Chaim Shlome Cell: 347-451-6482, Chanie Cell: 347-853-9852
+- Mr. & Mrs. Duvid & Shany Horowitz: Address: 700 Stone St, Rahway, NJ 07065, Duvid Cell: 347-743-3896, Shany Cell: 718-930-8226
+- Rabbi & Mrs. Eliezer Duvid & Hendy Horowitz: Address: 1220 Deerfield Ter, Linden, NJ 07036, Home: 908-925-0238, Eliezer Duvid Cell: 718-306-9707, Hendy Cell: 347-678-6758
+- Mr. & Mrs. Shmily & Devoiry Horowitz: Address: 1404 Dewitt Ter, Linden, NJ 07036, Home: 908-587-1601, Shmily Cell: 347-768-4513, Devoiry Cell: 917-275-4606
+- Rabbi & Mrs. Yisucher Ber & Rivky Horowitz: Address: 555 Livingston Rd, Linden, NJ 07036, Home: 718-854-1278, Yisucher Ber Cell: 347-853-0315, Rivky Cell: 347-786-4749
+- Rabbi. & Mrs. Yehuda & Dini Horowitz: Address: 506 Walnut Rd, Roselle Park, NJ 07204, Home: 908-577-2662, Yehuda Cell: 347-804-4433, Dini Cell: 718-689-1171
+- Mr. & Mrs. Yaakov Yitzchok & Malky Horowitz: Address: 260 East 2nd Ave, Roselle, NJ 07203, Yaakov Yitzchok Cell: 347-782-3602, Malky Cell: 929-214-0856
+- Rabbi & Mrs. Duvid Moshe & Simi Horowitz: Address: 129 Elmwood Ter, Linden, NJ 07036, Home: 718-645-1136, Duvid Moshe Cell: 347-831-1248, Simi Cell: 347-628-1761
+- Mr. & Mrs. Shia & Henny Horowitz: Address: 2807 Wickersham Ave, Linden, NJ 07036, Shia Cell: 347-585-3464, Henny Cell: 646-847-6154
+- Rabbi & Mrs. Chaim & Bracha Horowitz: Address: 401 W. Elm St, Linden, NJ 07036, Home: 908-525-3380, Chaim Cell: 347-971-6224, Bracha Cell: 347-495-6126
+- Mr. & Mrs. Shimon Dov & Chavy Igel: Address: 820 Summit St, Linden, NJ 07036, Home: 908-737-9259, Shimon Dov Cell: 917-861-2527, Chavy Cell: 347-232-1105
+- Mr. & Mrs. Gavriel Yehuda & Brandel Illowitz: Address: 1500 Dewitt Ter, Linden, NJ 07036, Gavriel Yehuda Cell: 347-940-2473, Brandel Cell: 347-844-0069
+- Mr. & Mrs. Mordche Avrum & Chaya'la Itzkowitz: Address: 125 W Gibbons St, Linden, NJ 07036, Home: 718-871-0108, Mordche Avrum Cell: 347-598-2990, Chaya'la Cell: 347-683-1916
+- Mr. & Mrs. Elimelech Shlome & Yocheved Jaroslowitz: Address: 259 E 6th Ave, Roselle, NJ 07203, Home: 718-857-0485, Elimelech Shlome Cell: 718-524-2626, Yocheved Cell: 347-743-1715
+- Rabbi & Mrs. Avrum Yoel & Miriam Jungreis: Address: 35 Harvard Rd, Linden, NJ 07036, Home: 908-357-2915, Avrum Yoel Cell: 718-687-8984, Miriam Cell: 718-314-9334
+- Mr. & Mrs. Shloimy & Ruchy Kaff: Address: 820 Summit St, Linden, NJ 07036, Home: 908-998-4316, Shloimy Cell: 347-828-0743, Ruchy Cell: 347-930-9410
+- Mr. & Mrs. Yidel & Faigy Kahana: Address: 810 Baldwin Ave, Linden, NJ 07036, Yidel Cell: 718-314-2201, Faigy Cell: 718-208-3001
+- Mr. & Mrs. Yochanan & Blimy Kasten: Address: 1312 Orchard Ter, Linden, NJ 07036, Home: 908-925-1949, Yochanan Cell: 347-546-8469, Blimy Cell: 347-834-4580
+- Mr. & Mrs. Aron Pinchas & Tziry Kasten: Address: 1810 Orchard Ter, Linden, NJ 07036, Aron Pinchas Cell: 347-598-3140, Tziry Cell: 718-387-0530
+- Mr. & Mrs. Duvid & Suri Katz: Address: 15 Yale Ter, Linden, NJ 07036, Home: 908-486-0189, Duvid Cell: 917-992-5765, Suri Cell: 347-499-9145
+- Mr. & Mrs. Duvid & Frady Katz: Address: 37 W Gibbons St, Linden, NJ 07036, Home: 908-486-2369, Duvid Cell: 917-855-8014, Frady Cell: 917-975-6155
+- Rabbi & Mrs. Usher Yeshya & Chana Esty Katz: Address: 207 Thelma Ter, Linden, NJ 07036, Home: 718-438-0726, Usher Yeshya Cell: 347-957-2196, Chana Esty Cell: 929-345-0220
+- Mr. & Mrs. Shmiel Aba & Suri Katz: Address: 2603 Summit Ter, Linden, NJ 07036, Home: 908-925-1424, Shmiel Aba Cell: 718-290-0553, Suri Cell: 347-531-7448
+- Mr. & Mrs. Kalmy & Baila Mindy Katz: Address: 20 Melrose Ter, Linden, NJ 07036, Home: 908-583-5162, Kalmy Cell: 718-687-8333, Baila Mindy Cell: 718-404-8335
+- Mr. & Mrs. Zalman & Faigy Katz: Address: 1308 Orchard Ter, Linden, NJ 07036, Home: 718-435-3980, Zalman Cell: 347-528-9267, Faigy Cell: 347-528-9275
+- Mr. & Mrs. Chesky & Yidis Katz: Address: 1600 N Stiles St, Linden, NJ 07036, Home: 908-587-5275, Chesky Cell: 347-853-4005, Yidis Cell: 347-628-6726
+- Mr. & Mrs. Eli & Ruchele Katz: Address: 908 Seymour Ave, Linden, NJ 07036, Eli Cell: 347-768-1158, Ruchele Cell: 347-930-8674
+- Mr. & Mrs. Hershy & Dubby Katz: Address: 937 Orchard Ter, Linden, NJ 07036, Hershy Cell: 917-273-4584, Dubby Cell: 917-656-9437
+- Mr. & Mrs. Mendy & Sura'la Katz: Address: 709 Exeter Rd, Linden, NJ 07036, Home: 718-851-1901, Mendy Cell: 718-576-9858, Sura'la Cell: 347-924-3785
+- Mr. & Mrs. Simcha & Chana Ruchy Katz: Address: 27 Robbinwood Ter, Linden, NJ 07036, Home: 908-486-1251, Simcha Cell: 718-344-1542, Chana Ruchy Cell: 646-832-8346
+- Mr. & Mrs. Eli & Chaya Suri Katz: Address: 1408 Dewitt Ter, Linden, NJ 07036, Home: 718-384-3496, Eli Cell: 845-492-7911, Chaya Suri Cell: 347-633-4137
+- Mr. & Mrs. Yisocher & Chaya'la Katz: Address: 515 Dewitt St, Linden, NJ 07036, Yisocher Cell: 929-276-5293, Chaya'la Cell: 347-585-2066
+- Rabbi & Reb. Yossi & Emma Katz: Address: 34 Harvard Rd, Linden, NJ 07036, Yossi Cell: 973-967-0675, Emma Cell: 732-318-4688
+- Mr. & Mrs. Shmuel Aba & Miriam Katz: Address: 2325 Orchard Ter, Linden, NJ , Home: 718-633-2067, Shmuel Aba Cell: 917-588-3516, Miriam Cell: 347-534-6645
+- Mr. & Mrs. Yisroel Binyamin & Suri Kaufman: Address: 518 Livingston Road, Linden, NJ 07036, Home: 908-525-3244, Yisroel Binyamin Cell: 848-210-7486, Suri Cell: 347-452-5409
+- Mr. & Mrs. Binyamin & Chana Malky Kaufman: Address: 72 Reinhold Ter, Union, NJ 07083, Home: 718-851-2143, Binyamin Cell: 347-578-1799, Chana Malky Cell: 929-545-1212
+- Mr. & Mrs. Duvid Moshe & Rivky Keonig: Address: 133 Deitz St., Cranford, NJ 07016, Home: 908-272-2838, Duvid Moshe Cell: 347-515-1739
+- Mr. & Mrs. Yanky & Leah Rivka Kerpel: Address: 115 Berwood Ave, Linden, NJ 07036, Yanky Cell: 917-617-9221, Leah Rivka Cell: 929-253-6006
+- Mr. & Mrs. Moshe Shmiel & Sussie Kerpel: Address: 503 Andress Ter, Union, NJ 07083, Home: 718-854-3932, Moshe Shmiel Cell: 347-436-6906, Sussie Cell: 718-930-2689
+- Mr. & Mrs. Ahron & Esty Kessler: Address: 1607 Cornell Dr, Linden, NJ 07036, Home: 908-925-8691, Ahron Cell: 347-578-5017, Esty Cell: 347-304-0107
+- Mr. & Mrs. Moishe & Gitty Kessler: Address: 235 Edgewood Rd, Linden, NJ 07036, Home: 718-972-1218, Moishe Cell: 347-300-3140, Gitty Cell: 347-533-2870
+- Mr. & Mrs. Yecheskel & Simi Kiwak: Address: 1403 Summit Ter, Linden, NJ 07036, Home: 718-851-4912, Yecheskel Cell: 347-525-8245, Simi Cell: 347-446-7764
+- Mr. & Mrs. Avrum Chaim & Zissy Klagsbraun: Address: 633 Brook St, Linden, NJ 07036, Home: 718-702-0851, Avrum Chaim Cell: 845-421-8090, Zissy Cell: 718-930-0967
+- Mr. & Mrs. Shimon & Perela Klein: Address: 257 Lincoln Ave, Union, NJ 07083, Home: 718-633-0749, Shimon Cell: 347-693-4796, Perela Cell: 347-693-4848
+- Mr. & Mrs. Shlome Zalmen & Yitty Klein: Address: 217 Gesner St, Linden, NJ 07036, Home: 908-632-6149, Shlome Zalmen Cell: 347-668-6899, Yitty Cell: 347-880-5022
+- Mr. & Mrs. Avigdor Chaim & Rochel Leah Klein: Address: 335 Fernwood Ter, Linden, NJ 07036, Home: 908-925-1759, Avigdor Chaim Cell: 347-585-6898, Rochel Leah Cell: 347-930-9372
+- Mr. & Mrs. Yakov Yitzchok & Chava Miriam Klein: Address: 321 Fernwood Ter, Linden, NJ 07036, Home: 908-486-2625, Yakov Yitzchok Cell: 347-860-1510, Chava Miriam Cell: 347-486-0653
+- Mr. & Mrs. Yeshua Chaim & Faigy Klein: Address: 25 Furber Ave, Linden, NJ 07036, Home: 718-599-0721, Yeshua Chaim Cell: 929-275-4830, Faigy Cell: 914-606-2960
+- Mr. & Mrs. Yitzchok Shloima & Miriam Klein: Address: 218 Yale Ter, Linden, NJ 07036, Home: 908-368-0181, Yitzchok Shloima Cell: 929-271-7598, Miriam Cell: 929-513-7394
+- Mr. & Mrs. Zisha & Blimy Klein: Address: 1714 Orchard Ter, Linden, NJ 07036, Zisha Cell: 845-689-4036, Blimy Cell: 347-831-6091
+- Mr. & Mrs. Shmeil Zalmen & Chevy Kleinman: Address: 310 Rosewood Ter, Linden, NJ 07036, Home: 718-854-1303, Shmeil Zalmen Cell: 347-786-0036, Chevy Cell: 718-344-3826
+- Rabbi & Reb. R' Efraim Mordechai & Zeesy Klughaupt: Address: 211 Gesner St, Linden, NJ 07036, R' Efraim Mordechai Cell: 347-243-3662, Zeesy Cell: 347-496-9473
+- Mr. & Mrs. Shmiel & Matty Knopfler: Address: 405 Brookside Dr, Roselle, NJ 07203, Shmiel Cell: 347-457-0722, Matty Cell: 347-356-4598
+- Mr. & Mrs. Yossi & Elky Knopfler: Address: 116 W Colfax Ave, Roselle Park, NJ 07204, Home: 718-851-8968, Yossi Cell: 646-549-1281, Elky Cell: 347-374-3392
+- Mr. & Mrs. Naftula Chaim & Hindy Knopfler: Address: 712 Amherst Rd, Linden, NJ 07036, Home: 718-851-1862, Naftula Chaim Cell: 347-525-8980, Hindy Cell: 347-675-2006
+- Mr. & Mrs. Shia & Aidel Kohlman: Address: 12 Rosewood Ter, Linden, NJ 07036, Shia Cell: 347-300-7081, Aidel Cell: 347-946-5487
+- Mr. & Mrs. Refael & Shaindy Kohn: Address: 137 Harvard Rd, Linden, NJ 07036, Refael Cell: 914-506-2950, Shaindy Cell: 929-663-7500
+- Mr. & Mrs. Chaim Avrum & Sima Perl Kohn: Address: 1414 Orchard Ter, Linden, NJ 07036, Home: 908-486-0592, Chaim Avrum Cell: 718-644-0324, Sima Perl Cell: 347-760-3001
+- Mr. & Mrs. Moshe & Hindy Kohn: Address: 702 Franklin Ter, Roselle, NJ 07203, Home: 908-620-3240, Moshe Cell: 347-514-0415, Hindy Cell: 718-404-4294
+- Mr. & Mrs. Yossi & Charny Kohn: Address: 32 Ross St, Clark, NJ 07066, Home: 732-215-4107, Yossi Cell: 917-974-8644, Charny Cell: 347-986-9180
+- Mr. & Mrs. Naftula Tzvi & Perele Kohn: Address: 213 Hillside Rd, Linden, NJ 07036, Naftula Tzvi Cell: 347-628-9520, Perele Cell: 718-290-0807
+- Mr. & Mrs. Yeshaya & Idy Kolman: Address: 12 Rosewood Ter, ,  , Yeshaya Cell: 347-300-7081, Idy Cell: 347-946-5487
+- Mr. & Mrs. Yakov & Pessy Kornreich: Address: 1119 Dewitt Ter, Linden, NJ 07036, Home: 718-435-0916, Yakov Cell: 347-228-0499, Pessy Cell: 718-930-2504
+- Mr. & Mrs. Yehuda & Henny Blima Kraus: Address: 2400 Orchard Ter, Linden, NJ 07036, Home: 718-636-6759, Yehuda Cell: 347-436-6341, Henny Blima Cell: 347-228-8341
+- Mr. & Mrs. Mordcha Yoel & Miriam Kraus: Address: 901 B Dewitt St, Linden, NJ 07036, Home: 908-925-1295, Mordcha Yoel Cell: 347-452-3498, Miriam Cell: 347-585-8251
+- Mr. & Mrs. Binyomin Yosef & Brucha Malka Kraus: Address: 23 Harvard Rd, Linden, NJ 07036, Home: 908-925-0640, Binyomin Yosef Cell: 347-563-1083, Brucha Malka Cell: 347-436-6041
+- Mr. & Mrs. Shloime & Miriam Kraut: Address: 301 Delaware Ave, Union, NJ 07083, Shloime Cell: 347-486-2337, Miriam Cell: 848-210-6826
+- Mr. & Mrs. Levi Yitzchok & Relly Kraut: Address: 238 New Jersey Ave, Union, NJ 07083, Home: 718-851-2196, Levi Yitzchok Cell: 347-839-1613, Relly Cell: 929-457-2439
+- Mr. & Mrs. Mordechai & Rivky Kritzler: Address: 1210 Summit Ter, Linden, NJ 07036, Home: 718-438-1385, Mordechai Cell: 646-707-5960
+- Mr. & Mrs. Avromy & Goldy Kurtz: Address: 324 Rosewood Ter, Linden, New Jersey 07036, Home: 718-437-8746, Avromy Cell: 929-557-5748, Goldy Cell: 347-452-1143
+- Mr. & Mrs. Shragi & Rivky Landau: Address: 633 Amherst Rd, Linden, NJ 07036, Shragi Cell: 917-635-0314, Rivky Cell: 347-405-1111
+- Mr. & Mrs. Shloma Simcha & Sura Hendy Landau: Address: 1400 Sunnyfield Dr, Linden, NJ 07036, Home: 718-871-0213, Shloma Simcha Cell: 929-441-8728, Sura Hendy Cell: 347-432-0222
+- Mr. & Mrs. Mordechai Volvi & Sussy Landau: Address: 2105 N Wood Ave, Linden, NJ 07036, Home: 718-851-4407, Mordechai Volvi Cell: 917-748-4320, Sussy Cell: 347-417-1950
+- Mr. & Mrs. Moshe Benzion & Dini Landau: Address: 722 Summit Street, Linden, NJ 07036, Home: 718-854-3137, Moshe Benzion Cell: 347-526-2073, Dini Cell: 347-564-2848
+- Mr. & Mrs. Yanky & Leah Lax: Address: 8 Gresser Ave, Linden, NJ 07036, Yanky Cell: 347-351-3866, Leah Cell: 347-988-0623
+- Mr. & Mrs. Chaim Yisroel & Leah Lebovits: Address: 444 Wheatsheaf Rd, Roselle, NJ 07203, Home: 718-797-3528, Chaim Yisroel Cell: 718-384-6756, Leah Cell: 347-452-5197
+- Mr. & Mrs. Yaakov & Mindy Lebowitz: Address: 1269 Shaffer Ave, Roselle, NJ 07203, Yaakov Cell: 929-215-8534, Mindy Cell: 929-361-8520
+- Mr. & Mrs. Yitzchok & Chavy Lebowitz: Address: 1408 Prospect Dr, Linden, NJ 07036, Home: 908-486-0313, Yitzchok Cell: 646-271-2699, Chavy Cell: 917-510-3544
+- Mr. & Mrs. Yoel Chaim & Faigy Lebowitz: Address: 2317 Orchard Ter, Linden, NJ 07036, Home: 718-854-3871, Yoel Chaim Cell: 347-452-4978, Faigy Cell: 347-585-8099
+- Mr. & Mrs. Binyomin & Hadas Lefkowitz: Address: 22 Alison Rd, Roselle, NJ 07203, Binyomin Cell: 347-469-8827, Hadas Cell: 718-581-9834
+- Mr. & Mrs. Lazer & Dina Frady Lefkowitz: Address: 631 Brook St, Linden, NJ 07036, Home: 908-925-1563, Lazer Cell: 347-742-7258, Dina Frady Cell: 347-831-2407
+- Mr. & Mrs. Yosef & Chavy Lefkowitz: Address: 751 Lindegar St, Linden, NJ 07036, Home: 718-252-2909, Yosef Cell: 929-394-4095, Chavy Cell: 646-745-7256
+- Rabbi & Mrs. Yitzchok Isaac & Chaya Leiberman: Address: 400 Morristown Rd, Linden, NJ 07036, Yitzchok Isaac Cell: 347-760-8050, Chaya Cell: 929-559-4597
+- Mrs.  & Heather Leibowitz: Address: 910 Princeton Rd, Linden, NJ 07036, Heather Cell: 908-220-6682
+- Rabbi & Mrs. Nachman & Ratzy Leifer: Address: 110 Palisade Rd, Linden, NJ 07036, Home: 718-851-1125, Nachman Cell: 347-988-8681, Ratzy Cell: 347-610-6624
+- Mr. & Mrs. Moshe Mordechia & Freidy Leifer: Address: 515 Dewitt Ter, Linden, NJ 07036, Moshe Mordechia Cell: 347-786-3208, Freidy Cell: 848-433-0587
+- Mr. & Mrs. Mordechai Hersh & Chana Ruchel Lemberger: Address: 735 Franklin Ter, Roselle, NJ 07203, Home: 908-358-6638, Mordechai Hersh Cell: 929-289-0810, Chana Ruchel Cell: 718-208-5103
+- Mr. & Mrs. Shulem Ahron & Toby Lemel: Address: 385 Putnam Rd, Union, NJ 07083, Home: 718-633-0598, Shulem Ahron Cell: 917-841-6477, Toby Cell: 347-675-7444
+- Mr. & Mrs. Mordechai & Tzivia Lenshevsky: Address: 1 Highland Pl, Clark, NJ 07066, Mordechai Cell: 347-622-0931, Tzivia Cell: 917-804-1461
+- Mr. & Mrs. Chaim & Hindy Leser: Address: 1314 Thelma Ter, Linden, NJ 07036, Home: 718-435-1770, Chaim Cell: 917-676-2546, Hindy Cell: 917-474-4076
+- Mr. & Mrs. Leibish & Chany Leser: Address: 529 Beechwood Rd, Linden, NJ 07036, Home: 718-972-1931, Leibish Cell: 347-585-9393, Chany Cell: 347-262-9332
+- Mr. & Mrs. Yosef Duvid & Hindy Levi: Address: 2508 N Stiles St, Linden, NJ 07036, Home: 908-486-2512, Yosef Duvid Cell: 646-864-7325, Hindy Cell: 347-930-9535
+- Mr. & Mrs. Shia & Liba Suri Levi: Address: 339 Birchwood Rd, Linden, NJ 07036, Shia Cell: 718-755-4762, Liba Suri Cell: 718-781-5683
+- Mr. & Mrs, Yona &  Levi: Address: 126 Palisade Rd., Linden, NJ 07036
+- Mr. & Mrs. Lazer & Faigy Levine: Address: 500 Livingston Rd, Linden, NJ 07036, Home: 908-925-4131, Lazer Cell: 845-641-9152, Faigy Cell: 646-901-3347
+- Mr. & Mrs. Shlome & Matty Licht: Address: 709 Midvale Pl, Linden, NJ 07036, Home: 718-436-2171, Shlome Cell: 347-786-4883, Matty Cell: 646-879-6613
+- Mr. & Mrs. Yanky & Mindy Licht: Address: 318 Birchwood Rd, Linden, NJ 07036, Home: 718-633-1347, Yanky Cell: 347-817-0433, Mindy Cell: 347-546-9105
+- Mr. & Mrs. Meir & Blimi Lichtenstadter: Address: 11 Yale Ter, Linden, NJ 07036, Home: 908-486-1982, Meir Cell: 347-436-6638, Blimi Cell: 347-263-0888
+- Mr. & Mrs. Yoel & Mimi Lichtenstein: Address: 1835 Winfield St, Rahway, NJ 07065, Home: 732-827-7677, Mimi Cell: 347-678-5853
+- Mr. & Mrs. Avruhom Hersh & Hendy Lieber: Address: 341 Elmwood Ter, Linden, NJ 07036, Home: 718-972-1413, Avruhom Hersh Cell: 646-724-8052, Hendy Cell: 347-652-5373
+- Rabbi & Mrs. Shlome & Ruchy Lieberman: Address: 1200 Stockton Rd, Linden, NJ 07036, Home: 718-633-5324, Shlome Cell: 347-304-0420, Ruchy Cell: 347-304-0421
+- Mr. & Mrs. Yitzchok Aron & Yitty Lindner: Address: 2502 N Stiles St., Linden, NJ 07036, Yitzchok Aron Cell: 929-409-1964, Yitty Cell: 551-347-9181
+- Mr. &Mrs. Moshe & Chumie Lipschitz: Address: 405 Princeton Rd, Linden, NJ 07036, Home: 718-854-8105, Moshe Cell: 917-608-5600, Chumie Cell: 917-608-5962
+- Mr. & Mrs. Benzion & Rivky Lipschutz: Address: 1106 Fedirko Ct, Linden, NJ 07036, Benzion Cell: 347-786-2619, Rivky Cell: 929-295-2817
+- Mr. & Mrs. Yitzchok & Baily Lipschutz: Address: 1615 Lenape Rd, Linden, NJ 07036, Home: 718-851-2361, Yitzchok Cell: 347-768-0446, Baily Cell: 917-843-6273
+- Mr. & Mrs. Sruli & Chany Lissauer: Address: 221 Elmwood Ter, Linden, NJ 07036, Home: 908-583-6300, Sruli Cell: 646-242-4942, Chany Cell: 718-791-1628
+- Mr. & Mrs. Yossi & Fradel Lissauer: Address: 324 Elmwood Ter, Linden, NJ 07036, Home: 718-435-1064, Yossi Cell: 347-294-6092, Fradel Cell: 347-294-7063
+- Mr. & Mrs. Yitzchok & Devoiry Lisz: Address: 163 W Roselle Ave, Roselle Park, NJ 07204, Home: 718-686-1349, Yitzchok Cell: 347-773-8146, Devoiry Cell: 718-581-4194
+- Mr. & Mrs. Moshe Yosef & Libby Lovi: Address: 140 Springfield Rd, Linden, NJ 07036, Moshe Yosef Cell: 718-594-7524, Libby Cell: 347-585-3900
+- Mr. & Mrs. Chaim Shia & Baily Lowy: Address: 337 Amherst Rd, Linden, NJ 07036, Home: 908-486-0410, Chaim Shia Cell: 347-645-3048, Baily Cell: 917-246-8547
+- Mr. Chaim Yichyel &  Lunger: Address: 221 Douglas Rd, Roselle, New Jersey 07203, Chaim Yichyel Cell: 845-548-0188
+- Mr. & Mrs. Chaim & Hindy Mandel: Address: 1402 N Stiles St, Linden, NJ 07036, Home: 718-305-7325, Chaim Cell: 917-880-6388, Hindy Cell: 516-401-8372
+- Mr. & Mrs. Shimon & Chaya'la Mandel: Address: 115 Swarthmore Rd, Linden, NJ 07036, Shimon Cell: 845-502-2304, Chaya'la Cell: 917-627-4339
+- Mr. & Mrs. Avrum Yakkov & Suri Mandelbaum: Address: 521 Lafayette St, Linden, NJ 07036, Home: 718-436-0047, Avrum Yakkov Cell: 917-960-1693, Suri Cell: 845-587-2896
+- Mr. & Mrs. Sruly & Freidy Mandelbaum: Address: 315 W Gibbons St, Linden, NJ 07036, Home: 908-486-0819, Sruly Cell: 347-756-0073, Freidy Cell: 347-756-2751
+- Mr. & Mrs. Yossel & Rachel'la Mandelbaum: Address: 136 Harvard Rd, Linden, NJ 07036, Home: 908-486-1610, Yossel Cell: 929-387-0814, Rachel'la Cell: 929-276-4653
+- Mr. & Mrs. Chaim & Esty Margareten: Address: 622 Erudo St, Linden, NJ 07036, Chaim Cell: 347-512-6089, Esty Cell: 718-637-3760
+- Mr. & Mrs. Yoel Moshe & Devoiry Markowitz: Address: 2012 Orchard Ter, Linden, NJ 07036, Home: 718-782-2161, Yoel Moshe Cell: 347-628-1112, Devoiry Cell: 917-280-1866
+- Mr. & Mrs. Eleizer Zusia & Rivky Mayer: Address: 233 Melrose Ter, Linden, NJ 07036, Home: 717-853-1419, Eleizer Zusia Cell: 347-512-6179, Rivky Cell: 347-946-4752
+- Mr. & Mrs. Nuchem & Chany Mayer: Address: 7 Heather Ln, Roselle, NJ 07203, Home: 908-418-7736, Nuchem Cell: 718-306-3983, Chany Cell: 929-417-3841
+- Mr. & Mrs. Yitzchok Isaac &  Mayer: Address: 1121 Forest Dr., Linden, NJ 07036,  Cell: 347-693-4021
+- Mr. & Mrs. Yitzchok Mechal & Hindy Meisels: Address: 215 Princeton Rd, Linden, NJ 07036, Yitzchok Mechal Cell: 347-533-2944, Hindy Cell: 718-344-1727
+- Rabbi & Mrs. Yoel & Shifra Meisels: Address: 10 W Gibbons St, Linden, NJ 07036, Home: 718-853-7354, Yoel Cell: 347-385-6456, Shifra Cell: 347-628-2179
+- Mr. & Mrs. Mordechai & Lifshy Meisels: Address: 220 W Gibbons, Linden, NJ 07036, Mordechai Cell: 914-521-0717, Lifshy Cell: 908-494-6579
+- Mr. & Mrs. Duvid & Itty Mendelovitz: Address: 438 Dewitt St, Linden, NJ 07036, Home: 908-474-5290, Duvid Cell: 845-422-2642, Itty Cell: 347-262-3094
+- Mr. & Mrs. Meir Volf & Faigy Mendlowitz: Address: 134 Palisade Rd, Linden, NJ 07036, Meir Volf Cell: 929-276-5605, Faigy Cell: 718-747-4197
+- Mr. & Mrs. Yisroel Mayer & Raizy Mendlowitz: Address: 927 Ainsworth St, Linden, NJ 07036, Home: 718-437-9029, Yisroel Mayer Cell: 917-586-5465, Raizy Cell: 718-757-2457
+- Mr. & Mrs. Chazkel & Rochel Mendlowitz: Address: 310 Morningside Rd, Linden, NJ 07036, Home: 718-686-6364, Chazkel Cell: 917-226-0261, Rochel Cell: 347-790-7177
+- Mr. & Mrs. Duvid Yakov & Perry Mendlowitz: Address: 1121 Forest Drive, Clark, NJ 07066, Home: 718-576-3824, Duvid Yakov Cell: 845-662-8382, Perry Cell: 347-585-6973
+- Mr. & Mrs. Tzvi Yehuda & Frady Mermelstein: Address: 553 Homer Ter, Union, NJ 07083, Tzvi Yehuda Cell: 845-671-6512, Frady Cell: 845-376-5623
+- Mr. & Mrs. Akiva Levi Yitzchok & Devoiry Miller: Address: 1541 Lenape Rd, Linden, NJ 07036, Home: 908-925-1472, Akiva Levi Yitzchok Cell: 347-786-2011, Devoiry Cell: 347-785-4346
+- Mr. & Mrs. Shloimy & Sura'la Miller: Address: 329 Fernwood Ter, Linden, NJ 07036, Home: 908-486-1593, Shloimy Cell: 917-374-7950, Sura'la Cell: 929-271-3299
+- Mr. & Mrs. Benzion & Bruchy Miller: Address: 628 Salem Rd, Union, NJ 07083, Home: 718-388-3727, Benzion Cell: 917-789-4217, Bruchy Cell: 347-320-6400
+- Mr. & Mrs. Eizik & Ratzi Miller: Address: 448 Stratford Rd, Union, NJ 07083, Home: 908-688-0052, Eizik Cell: 347-935-6965, Ratzi Cell: 347-366-3437
+- Mr. & Mrs. Mordechai & Miriam Miller: Address: 1301 Prospect Dr, Linden, NJ 07036, Home: 908-486-0804, Mordechai Cell: 646-951-7307, Miriam Cell: 347-971-1634
+- Mr. & Mrs. Mordechai Duvid & Bassy Miller: Address: 872 Greenwich Ln, Union, NJ 07083, Mordechai Duvid Cell: 718-288-4359, Bassy Cell: 845-825-9163
+- Mr. & Mrs. Uziel & Rivky Miller: Address: 829 Walnut St, Roselle Park, NJ 07204, Home: 718-436-0181, Uziel Cell: 347-280-4109, Rivky Cell: 347-782-7475
+- Mr. & Mrs. Binyamin & Esther Fradel Monheit: Address: 1405 Sherwood Rd, Linden, NJ 07036, Binyamin Cell: 718-308-7461, Esther Fradel Cell: 718-710-0605
+- Mr. & Mrs. Mendel & Sheva Rivky Moskowicz: Address: 702 Winchester Ave, Union, NJ 07083, Home: 929-549-5420, Mendel Cell: 718-812-8689, Sheva Rivky Cell: 347-853-6887
+- Mr. & Mrs. Yeshua Duvid & Leah Moskowitz: Address: 2723 Highland Ave, Linden, NJ 07036, Home: 718-633-5124, Yeshua Duvid Cell: 347-578-0203, Leah Cell: 646-574-6726
+- Mr. & Mrs. Yecheskel & Perela Mutzen: Address: 124 Harvard Rd, Linden, NJ 07036, Yecheskel Cell: 929-512-8145, Perela Cell: 929-441-1609
+- Mr. & Mrs. Yanky & Shaindy Nass: Address: 227 Harvard Rd, Linden, NJ 07036, Home: 908-583-5953, Yanky Cell: 917-662-6848, Shaindy Cell: 646-359-7380
+- Mr. & Mrs. Tzvi Ozer & Charny Neuschloss: Address: 542 Morristown, Linden, NJ 07036, Tzvi Ozer Cell: 347-452-7225, Charny Cell: 718-702-3153
+- Mr. & Mrs. Yakov Moshe & Natanya Nudelman: Address: 449 Brooklawn Ave, Roselle, NJ 07203, Yakov Moshe Cell: 410-608-1450, Natanya Cell: 443-474-0094
+- Mr. & Mrs. Ahron & Sara Bracha Nussbaum: Address: 232 Academy Ter, Linden, NJ 07036, Home: 908-486-6446, Ahron Cell: 908-565-0359, Sara Bracha Cell: 908-565-6446
+- Mr. & Mrs. Avrum Simcha & Shevy Oberlander: Address: 527 Fairway Rd, Linden, NJ 07036, Home: 347-668-1121, Avrum Simcha Cell: 347-223-2237, Shevy Cell: 347-652-4442
+- Mr. & Mrs. Shlome & Simi Oberlander: Address: 8 Newton St, Linden, NJ 07036, Home: 908-525-3508, Shlome Cell: 929-283-1042, Simi Cell: 929-382-0199
+- Mr. & Mrs. Shulem & Malky Oberlander: Address: 1549 Cornell Dr, Linden, NJ 07036, Shulem Cell: 718-938-6435, Malky Cell: 347-714-2371
+- Mr. & Mrs. Menachem Zev & Idy Oberlander: Address: 615 Miltonia St, Linden, NJ 07036, Menachem Zev Cell: 845-548-7499, Idy Cell: 347-232-2181
+- Mr. & Mrs. Shia & Yocheved Yitta Oberlander: Address: 1207 Dewitt Ter, Linden, NJ 07036, Shia Cell: 347-858-6389, Yocheved Yitta Cell: 347-858-6258
+- Mr. & Mrs. Shmiel & Chanie Orgel: Address: 522 Winthrop Rd, Union, NJ 07083, Shmiel Cell: 631-438-1825, Chanie Cell: 917-652-2514
+- Rabbi & Mrs. Ahron & Chaya Blimy Ostreicher: Address: 1314 Deerfield Ter, Linden, NJ 07036, Home: 718-871-5536, Ahron Cell: 917-684-7992, Chaya Blimy Cell: 917-673-2315
+- Mr. & Mrs. Shia & Baila Padwa: Address: 502 W 7th Ave, Roselle, NJ , Home: 908-445-7620, Shia Cell: 845-502-1453, Baila Cell: 845-213-0875
+- Mr. & Mrs. Duvid Tzvi & Miriam Papier: Address: 620 Beechwood Rd, Linden, NJ 07036, Duvid Tzvi Cell: 347-455-4840, Miriam Cell: 347-918-6868
+- Mr. & Mrs. Mordche Eliezer & Ruchy Paskes: Address: 1117 Dewitt Ter, Linden, NJ 07036, Home: 908-925-1298, Mordche Eliezer Cell: 347-768-1844, Ruchy Cell: 347-388-2811
+- Mr. & Mrs. Levi Yitzchok & Suri Paskes: Address: 2811 Dewitt Ter, Linden, NJ 07036, Home: 908-486-2470, Levi Yitzchok Cell: 347-644-4096, Suri Cell: 347-721-7309
+- Mr. & Mrs. Yesucher Berish & Chany Paskes: Address: 2719 Highland Ave, Linden, NJ 07036, Chany Cell: 347-797-7159
+- Mr. & Mrs. Motty & Esty Pfeiffer: Address: 1411 N Wood Ave, Linden, NJ 07036, Home: 718-633-3635, Motty Cell: 917-560-0645, Esty Cell: 917-589-7344
+- Mr. & Mrs. Moshe Yoel & Esty Pollak: Address: 105 Saint Germain Dr, Clark, NJ 07066, Home: 718-302-0281, Moshe Yoel Cell: 347-432-5836, Esty Cell: 347-335-7360
+- Rabbi & Mrs. Shia & Bruchy Pollak: Address: 125 Fernwood, Linden, NJ 07036, Home: 718-633-1816, Shia Cell: 347-481-3931, Bruchy Cell: 929-287-1453
+- Mr. & Mrs. Mendy & Rochmy Posner: Address: 602 Birchwood Rd, Linden, NJ 07036, Home: 718-633-3238, Mendy Cell: 347-452-4707, Rochmy Cell: 917-588-2229
+- Mr. & Mrs. Tzvi Duvid & Reizy Posner: Address: 47 Fernwood Ter, Linden, NJ 07036, Home: 908-620-3843, Tzvi Duvid Cell: 347-633-4654, Reizy Cell: 929-722-6992
+- Mr. & Mrs. Benzion & Miri Posner: Address: 136 Yale Ter, Linden, NJ 07036, Home: 718-438-1496, Benzion Cell: 347-864-1214, Miri Cell: 347-554-1706
+- Mr. & Mrs. Hersh Duvid & Chaya Sury Posner: Address: 2727 Summit Ter, Linden, NJ 07036, Home: 908-925-1872, Hersh Duvid Cell: 347-768-0275, Chaya Sury Cell: 347-786-0479
+- Mr. & Mrs. Menachem Nuchem & Chava Chaya Preis: Address: 2011 Summit Ter, Linden, NJ 07036, Home: 718-633-0947, Menachem Nuchem Cell: 347-946-5797, Chava Chaya Cell: 347-729-5073
+- Mr. & Mrs. Chaim & Breindy Prushinowski: Address: 224 Swarthmore Rd, Linden, NJ 07036, Chaim Cell: 347-304-1658, Breindy Cell: 917-836-2806
+- Mr. & Mrs. Ahron & Ruchy Prushinowski: Address: 527 Hory St, Roselle, NJ 07203, Home: 908-445-4171, Ahron Cell: 845-376-5719, Ruchy Cell: 347-907-1386
+- Mr. & Mrs. Shimon & Chayie Reich: Address: 608 Amherst Rd, Linden, NJ 07036, Home: 718-435-3709, Shimon Cell: 718-419-2932, Chayie Cell: 718-431-4036
+- Mr. & Mrs. Moshe & Bailee Reichman: Address: 32 Fernwood Terrace, Linden, NJ 07036, Moshe Cell: 929-214-9433, Bailee Cell: 917-488-8860
+- Mr. & Mrs. Mordechai & Malky Reifer: Address: 304 Stockton Rd, Union, NJ 07083, Home: 718-438-1647, Mordechai Cell: 347-546-0226, Malky Cell: 917-474-4830
+- Mr. & Mrs. Aron Zelig & Gitty Reifer: Address: 641 Fairway Rd, Linden, NJ 07036, Aron Zelig Cell: 718-669-5703, Gitty Cell: 929-289-3975
+- Mr. & Mrs. Eliokim & Faigy Reiner: Address: 1603 Cornell Dr, Linden, NJ 07036, Eliokim Cell: 917-719-5524, Faigy Cell: 646-254-2636
+- Mr. & Mrs. Shlome & Ruchy Reinhold: Address: 235 Lincoln Ave, Union, NJ 07083, Home: 718-851-4065, Shlome Cell: 347-546-7650, Ruchy Cell: 347-342-8758
+- Mr. & Mrs. Shulem & Matty Reinhold: Address: 119 Thelma Ter, Linden, NJ 07036, Home: 718-435-0864, Shulem Cell: 347-383-3865, Matty Cell: 347-675-1872
+- Mr. & Mrs. Tzvi Yehuda & Chaya Sury Reinhold: Address: 1711 Dewitt Ter, Linden, NJ 07036, Home: 718-972-0908, Tzvi Yehuda Cell: 347-743-4360, Chaya Sury Cell: 347-581-9819
+- Mr. & Mrs. Yanky & Gitty Reisman: Address: 25 Melrose Ter, Linden, NJ 07036, Yanky Cell: 347-768-3312, Gitty Cell: 347-668-7564
+- Mr. & Mrs. Yisroel Mordechai & Etty Reiss: Address: 244 New Jersey Ave, Union, NJ 07083, Yisroel Mordechai Cell: 347-304-0707, Etty Cell: 347-893-5371
+- Mr. & Mrs. Dov & Chany Reiss: Address: 223 Colonial Ave, Union, NJ 07083, Home: 718-436-2535, Dov Cell: 347-683-7907, Chany Cell: 718-755-1126
+- Mr. & Mrs. Shia & Miriam Baily Reisz: Address: 50 Reinhold Ter, Union, NJ 07083, Shia Cell: 718-578-2703, Miriam Baily Cell: 917-217-8504
+- Mr. & Mrs. Naftali & Reizel Perel Reisz: Address: 2731 Wickersham Ave, Linden, NJ 07036, Naftali Cell: 347-971-6636, Reizel Perel Cell: 347-563-8324
+- Mr. & Mrs. Ayton & Devorah Rice: Address: 435 Miner Ter, Linden, NJ 07036, Ayton Cell: 414-444-7423, Devorah Cell: 646-624-7443
+- Rabbi & Mrs. Mendel Meir & Yenty Rosenbaum: Address: 218 Harvard Rd, Linden, NJ 07036, Mendel Meir Cell: 201-685-0665, Yenty Cell: 347-458-2343
+- Mr. & Mrs. Yoeli & Esty Rosenberg: Address: 627 Amherst Rd, Linden, NJ 07036, Yoeli Cell: 718-855-1010, Esty Cell: 347-525-7772
+- Mr. & Mrs. Chaim Meir & Gitty Rosenberg: Address: 1515 N Stiles St, Linden, NJ 07036, Home: 908-374-0469, Chaim Meir Cell: 347-572-8639, Gitty Cell: 347-374-0469
+- Mr. & Mrs. Gavriel & Tzivie Rosenberg: Address: 410 Livingston Rd, Linden, NJ 07036, Home: 908-486-1712, Gavriel Cell: 347-385-8494, Tzivie Cell: 347-385-7020
+- Mr. & Mrs. Yakov Dov & Esty Rosenberg: Address: 2268 Church St, Rahway, NJ 07065, Home: 732-540-8085, Yakov Dov Cell: 917-471-3883, Esty Cell: 929-475-2411
+- Mr. & Mrs, Yitzchok & Chavy Rosenberg: Address: 353 Dewitt St, Linden, NJ 07036, Yitzchok Cell: 347-622-2197, Chavy Cell: 347-452-5853
+- Mr. & Mrs. Ari & Nechy Rosenfeld: Address: 335 W 3rd Ave, Roselle, NJ 07203, Home: 908-298-6045, Ari Cell: 347-486-1937, Nechy Cell: 718-704-8166
+- Mr. & Mrs. Benzion & Raizy Rosenfeld: Address: 2024 Verona Ave, Linden, NJ 07036, Home: 718-633-0316, Benzion Cell: 917-294-1697, Raizy Cell: 718-600-2141
+- Mr. & Mrs. Yonah Zev & Esther Yitty Rosenfeld: Address: 470 Colonial Ave, Union, NJ 07083, Home: 718-633-3192, Yonah Zev Cell: 929-486-6222, Esther Yitty Cell: 347-889-1294
+- Mr. & Mrs. Mordechai & Devoiry Roth: Address: 916 Rayhon Ter, Rahway, NJ 07065, Mordechai Cell: 718-213-5078, Devoiry Cell: 718-309-9531
+- Mr. & Mrs. Eli & Baily Roth: Address: 706 Haven Pl, Linden, NJ 07036, Eli Cell: 718-216-1949, Baily Cell: 347-645-4995
+- Mr. & Mrs. Joel & Shevy Roth: Address: 1410 Orchard Ter, Linden, NJ 07036, Home: 718-782-0586, Joel Cell: 347-415-6571, Shevy Cell: 347-228-7409
+- Mr. & Mrs. Yaakov Meir & Chany Roth: Address: 1301 Thelma Ter, Linden, NJ 07036, Home: 908-986-0013, Yaakov Meir Cell: 347-228-1900, Chany Cell: 718-812-8159
+- Mr. & Mrs. Baruch & Rivky Roth: Address: 1236 Wheatsheaf Rd, Roselle, NJ 07203, Baruch Cell: 718-781-2197, Rivky Cell: 929-377-0253
+- Mr, & Mrs. Pinchus & Simi Roth: Address: 40 Swarthmore Rd, Linden, NJ 07036, Pinchus Cell: 718-637-7814, Simi Cell: 347-835-1366
+- Rabbi & Mrs. Benzion & Hendel Rottenberg: Address: 509 Academy Ter, Linden, NJ 07036, Benzion Cell: 347-397-7154, Hendel Cell: 347-397-7906
+- Rabbi & Mrs. Chaim Shloima & Sura Yitty Rottenberg: Address: 51 Swarthmore Rd, Linden, NJ 07036, Home: 718-871-8743, Chaim Shloima Cell: 347-300-9523, Sura Yitty Cell: 347-447-8422
+- Rabbi & Mrs. Meir Eluzer & Soshi Rottenberg: Address: 221 Morningside Ave, Linden, NJ 07036, Home: 718-851-2458, Meir Eluzer Cell: 347-452-9902, Soshi Cell: 347-977-7465
+- Rabbi & Mrs. Meshilem Feish & Bruchi Rottenberg: Address: 1114 Orchard Ter, Linden, NJ 07036, Home: 718-436-1038, Meshilem Feish Cell: 347-578-3247, Bruchi Cell: 347-930-8751
+- Rabbi & Mrs. Moshe Shmiel & Lifshi Rottenberg: Address: 216 Gesner St, Linden, NJ 07036, Home: 908-587-1149, Moshe Shmiel Cell: 917-532-6038, Lifshi Cell: 917-474-4212
+- Rabbi & Mrs. Pinchas Shulem & Esty Rottenberg: Address: 1621 N Wood Ave, Linden, NJ 07036, Pinchas Shulem Cell: 929-287-1866, Esty Cell: 347-578-3210
+- Rabbi & Mrs. Shloima & Chumy Rottenberg: Address: 116 Yale Ter, Linden, NJ 07036, Shloima Cell: 917-499-4853, Chumy Cell: 347-633-0015
+- Rabbi & Mrs. Yaakov Naftula & Sury Rottenberg: Address: 1517 Orchard Ter, Linden, NJ 07036, Home: 908-486-0939, Yaakov Naftula Cell: 347-314-1941, Sury Cell: 718-853-5524
+- Rabbi & Mrs. Yehuda & Chana Esther Rottenberg: Address: 1507 N Wood Ave, Linden, NJ 07036, Yehuda Cell: 929-486-4813, Chana Esther Cell: 929-276-5599
+- Mr. & Mrs. Avrum Duvid & Maly Rottenberg: Address: 368 Bergen St, Union, NJ 07083, Avrum Duvid Cell: 347-760-2192, Maly Cell: 347-452-6490
+- Mr. & Mrs. Leibish & Toby Rottenberg: Address: 731 Winchester Ave, Union, NJ 07083, Leibish Cell: 718-600-4559, Toby Cell: 347-299-6153
+- Rabbi & Mrs. Shmiel & Chana Ruchy Rubin: Address: 701 Beechwood Rd, Linden, NJ 07036, Home: 908-925-0249, Shmiel Cell: 347-578-0744, Chana Ruchy Cell: 347-957-1901
+- Rabbi. & Mrs. Avrohom & Rochel Perel Rubin: Address: 311 Edgewood Rd, Linden, NJ 07036, Home: 718-633-7044, Avrohom Cell: 917-789-0856, Rochel Perel Cell: 347-831-5549
+- Mr. & Mrs. Aaron & Reizy Rubin: Address: 212 Yale Ter, Linden, NJ 07036, Home: 718-633-3070, Aaron Cell: 718-809-0218, Reizy Cell: 347-563-0353
+- Rabbi & Mrs. Shia & Esther Rivky Rubin: Address: 1200 N Stiles St, Linden, NJ 07036, Home: 718-436-0753, Shia Cell: 347-268-0800, Esther Rivky Cell: 347-742-8237
+- Rabbi & Mrs. Yakkov Yisroel & Hinda Leah Rubin: Address: 1725 N Stiles St, Linden, NJ 07036, Home: 718-436-0888, Yakkov Yisroel Cell: 929-417-1708, Hinda Leah Cell: 347-768-3345
+- Rabbi  & Mrs. Boruch & Blimie Rubin: Address: 1605 Orchard Ter, Linden, NJ 07036, Home: 908-486-1412, Boruch Cell: 718-781-6316, Blimie Cell: 347-666-2685
+- Mr. & Mrs. Nussan Nuta & Chana Rubin: Address: 380 Princeton Rd, Union, NJ 07083, Home: 718-522-6914, Nussan Nuta Cell: 347-786-4059
+- Mr. & Mrs. Yisroel Yaakov & Shiffy Ruchlitz: Address: 21 Palisade Rd, Linden, NJ 07036, Yisroel Yaakov Cell: 347-678-4927, Shiffy Cell: 347-765-7080
+- Mr. & Mrs. Chaim  Meir & Hendy Sabel: Address: 539 Livingston Rd, Linden, NJ 07036, Home: 908-925-4477, Chaim  Meir Cell: 646-684-1226, Hendy Cell: 718-757-3639
+- Mr. & Mrs. Yosef Elimelach & Rivky Sabel: Address: 2307 Summit Ter, Linden, NJ 07036, Yosef Elimelach Cell: 917-952-5890, Rivky Cell: 347-668-8079
+- Mr. & Mrs. Yitzchok Ben Zion & Chumy Safern: Address: 350 Cambridg Dr, Union, NJ 07083, Home: 718-436-2876, Yitzchok Ben Zion Cell: 347-622-3905, Chumy Cell: 917-246-8449
+- Mr. & Mrs. Joel & Leah Saks: Address: 2611 Orchard Ter, Linden, NJ 07036, Joel Cell: 929-247-9781, Leah Cell: 929-247-9839
+- Mr. & Mrs. Shulem & Blimie Salamon: Address: 18 Lancaster Rd, Union, NJ 07083, Home: 718-851-1704, Shulem Cell: 718-223-0473, Blimie Cell: 929-272-7185
+- Mr. & Mrs. Ari & Malky Sanders: Address: 2211 Dewitt Ter, Linden, NJ 07036, Ari Cell: 347-221-5022, Malky Cell: 845-707-3691
+- Mr. & Mrs. Yitzchok & Tzippy Scharf: Address: 3 Longfellow Ln, Clark, NJ 07066, Home: 718-854-7814, Yitzchok Cell: 718-755-9927, Tzippy Cell: 718-288-3526
+- Mr. & Mrs. Efriam Tovia & Chaya Malky Schaya: Address: 441 Inwood Rd, Linden, NJ 07036, Home: 908-486-1307, Efriam Tovia Cell: 347-239-9009, Chaya Malky Cell: 347-587-9899
+- Mr. & Mrs. Burach Shmiel & Suri Schaya: Address: 1319 Orchard Ter, Linden, NJ 07036, Home: 718-854-1814, Burach Shmiel Cell: 347-585-9872, Suri Cell: 917-968-6249
+- Mr. & Mrs. Ahron & Suri Schlafrig: Address: 651 Fairway Rd, Linden, NJ 07036, Home: 908-718-9070, Ahron Cell: 917-916-1497, Suri Cell: 718-633-0528
+- Mr. & Mrs. Leibish & Mindy Schlafrig: Address: 300 W Curtis St, Linden, NJ 07036, Home: 908-486-3333/ 908-486-3332, Leibish Cell: 347-902-8070, Mindy Cell: 917-200-2626
+- Mr. & Mrs. Leibish & Esther Ruchy Schlafrig: Address: 39 W Gibbons St, Linden, NJ 07036, Home: 718-871-4561, Leibish Cell: 917-604-6023, Esther Ruchy Cell: 718-809-7213
+- Mr. & Mrs. Yehoshua Chaim & Chany Schlafrig: Address: 224 Birchwood Rd, Linden, NJ 07036, Home: 908-486-0430, Yehoshua Chaim Cell: 347-563-5011
+- Mr. & Mrs. Yaakov M. & Roizy Schlafrig: Address: 94 Saint Laurent Dr, Clark, NJ 07066, Yaakov M. Cell: 917-804-4001, Roizy Cell: 718-781-1996
+- Mr. & Mrs. Yehuda Eliezer & Rivky Schlesinger: Address: 420 Rosetta Pl, Union, NJ 07083, Yehuda Eliezer Cell: 347-461-6045, Rivky Cell: 718- 637-7606
+- Rabbi. &  Reb. Shea & Esty Schnebalg: Address: 47 Melrose Ter, Linden, NJ 07036, Home: 718-384-3967, Esty Cell: 718-930-8991
+- Mr. & Mrs. Moshe Duvid & Chumy Schon: Address: 537 Princeton Rd, Linden, NJ 07036, Home: 718-851-2414, Moshe Duvid Cell: 917-864-8596, Chumy Cell: 347-678-1738
+- Mr. & Mrs. Yanky & Toby Schon: Address: 222 Edgewood Rd, Linden, NJ 07036, Home: 718-438-1903, Yanky Cell: 347-628-4145, Toby Cell: 718-840-8724
+- Mr. & Mrs. Yanky & Breindy Schondorf: Address: 55 Reinhold Ter, Union, NJ 07083, Home: 718-633-1699, Yanky Cell: 718-249-3372, Breindy Cell: 646-671-3364
+- Mr. & Mrs. Naftuli & Chaya Schonfeld: Address: 1313 Orchard Ter, Linden, NJ 07036, Home: 908-925-1254, Naftuli Cell: 347-860-0808, Chaya Cell: 718-614-3964
+- Mr. & Mrs. Yisroel Yehuda & Faigy Schonfeld: Address: 2310 Desisto Dr, Rahway, NJ 07065, Home: 718-853-3179, Yisroel Yehuda Cell: 347-939-9959, Faigy Cell: 347-432-4077
+- Mr. & Mrs. Yidel & Rochel Liba Schonfeld: Address: 2925 N Wood Ave, Linden, New Jersey 07036, Home: 718-853-7043, Yidel Cell: 718-598-7895, Rochel Liba Cell: 718-810-3242
+- Mr. & Mrs. Shimon & Leah'la Schwartz: Address: 557 Homer Terrace, Union, NJ 07083, Home: 718-633-0239, Shimon Cell: 917-626-2096, Leah'la Cell: 347-742-7155
+- Mr. & Mrs. Pinchus Zelig & Yitty Schwartz: Address: 2600 Orchard Ter, Linden, NJ 07036, Home: 718-387-4608, Pinchus Zelig Cell: 347-362-3482, Yitty Cell: 718-757-4367
+- Mr. & Mrs. Aron Moshe &  Schwartz: Address: 57 Raritan Rd, Linden, NJ 07036
+- Mr. & Mrs. Yoel Yitzchok & Chavy Schwartz: Address: 35 Skylark Pl, Clark, NJ 07066, Home: 718-237-9596, Chavy Cell: 347-232-9997
+- Mr. & Mrs. Shaul Yecheskel & Miriam Schwartz: Address: 255 E 6th Ave, Roselle, NJ 07203, Shaul Yecheskel Cell: 862-343-0930, Miriam Cell: 347-628-9203
+- Mr. & Mrs. Yoel Zussman & Yitty Schwartz: Address: 246 E 6th Ave, Roselle, NJ 07203, Home: 718-782-1564, Yoel Zussman Cell: 347-731-5915, Yitty Cell: 347-645-2504
+- Mr. & Mrs. Hershy & Esty Schwartz: Address: 217 Acadamy Ter, Linden, NJ 07036, Home: 718-435-1821, Hershy Cell: 917-627-9918, Esty Cell: 917-627-9541
+- Mr. & Mrs. Moshe & Gitty Schwartz: Address: 549 Valley Rd, Clark, NJ 07066, Moshe Cell: 718-640-4038, Gitty Cell: 347-977-0159
+- Mr. & Mrs. Pinchas & Pessy Schwartz: Address: 822 Summit St, Linden, NJ 07036, Home: 908-925-2525, Pinchas Cell: 347-743-8072, Pessy Cell: 347-931-4399
+- Mr. & Mrs. Yosef & Esther Bracha Segal: Address: 836 Lindegar St, Linden, NJ 07036, Yosef Cell: 848-222-9988, Esther Bracha Cell: 845-290-7920
+- Rabbi & Mrs. Yisroel & Tzirel Sekula: Address: 547 Salem Rd, Union, NJ 07083, Home: 908-258-0499, Yisroel Cell: 347-831-2597, Tzirel Cell: 347-675-6419
+- Mr. & Mrs. Moshe Shulem & Shaindy Shor: Address: 476 Thoreau Ter, Union, NJ 07083, Home: 718-851-2574, Moshe Shulem Cell: 347-563-4351, Shaindy Cell: 347-675-4218
+- Rabbi & Reb. Yakov Menachem Mendel &  Shteif: Address: 201 Deitz Rd, Cranford, NJ 07016, Yakov Menachem Mendel Cell: 347-768-4794
+- Mr. & Mrs. Shloime & Rivky Silberman: Address: 902 Franklin Ter, Roselle, NJ 07203, Shloime Cell: 347-423-1969, Rivky Cell: 347-457-7208
+- Mr. & Mrs. Ahron & Chavy Silberstein: Address: 5 Arthur St, Roselle, NJ 07203, Ahron Cell: 718-640-6767, Chavy Cell: 347-668-4634
+- Mr. & Mrs. Meilech & Shavy Silbiger: Address: 264 New Jersey Ave, Union, NJ 07083, Home: 718-852-8328, Meilech Cell: 347-930-8787, Shavy Cell: 646-647-9561
+- Rabbi & Mrs. Elchunen & Eshter Silbirger: Address: 311 Salem Rd, Union, NJ 07083, Home: 908-258-8605, Elchunen Cell: 917-809-1075, Eshter Cell: 347-302-1665
+- Mr. & Mrs. Yitzchok Mordechia & Miri Singer: Address: 1215 Stockton Rd, Clark, NJ 07066, Yitzchok Mordechia Cell: 646-460-5230, Miri Cell: 929-245-5922
+- Mr. & Mrs. Yisroel Duvid & Gitty Singer: Address: 714 Stanley Ter, Roselle, NJ 07203, Yisroel Duvid Cell: 917-565-0970, Gitty Cell: 347-804-5724
+- Mr. & Mrs. Moshe & Faigy Singer: Address: 303 Fernwood Ter, Linden, NJ 07036, Moshe Cell: 347-889-1753, Faigy Cell: 347-893-4893
+- Mr. & Mrs. Shea & Liba Chany Singer: Address: 122 Elmwood Ter, Linden, NJ 07036, Shea Cell: 347-786-4386, Liba Chany Cell: 347-486-0648
+- Mr. & Mrs. Yehuda Yoel & Sura Mindy Singer: Address: 2016 Orchard Ter, Linden, NJ 07036, Home: 845-350-2668, Yehuda Yoel Cell: 347-623-5721, Sura Mindy Cell: 718-781-2637
+- Mr. & Mrs. Shia Mendel & Devorah Perl Sitko: Address: 1636 Westover Rd, Linden, NJ 07036, Shia Mendel Cell: 347-909-1694, Devorah Perl Cell: 347-580-3047
+- Mr. & Mrs. Moshe & Ratzy Smilowitz: Address: 701 Fairway Rd, Linden, NJ 07036, Moshe Cell: 347-675-8712, Ratzy Cell: 718-781-9458
+- Mr. & Mrs. Yoel & Esty Smilowitz: Address: 426 Amherst, Linden, NJ 07036, Yoel Cell: 718-954-7872, Esty Cell: 929-655-8539
+- Mr. & Mrs. Yoel & Chavy Sofer: Address: 719 Spruce St, Roselle, NJ 07203, Chavy Cell: 347-383-7435
+- Rabbi & Reb.  & Chany Sofer: Address: 1711 N Wood Ave, Linden, NJ 07036, Home: 908-925-1292,  Cell: 917-471-1520, Chany Cell: 347-645-8845
+- Mr. & Mrs. Shloima Burach & Chany Soloman: Address: 210 Elmwood Ter, Linden, NJ 07036, Home: 718-633-5291, Shloima Burach Cell: 347-300-7084, Chany Cell: 718-541-0222
+- Mr. & Mrs. Akiva Yonason Chaim & Simi Soloman: Address: 12 Lucien Pl, Linden, NJ 07036, Akiva Yonason Chaim Cell: 347-451-7574, Simi Cell: 347-519-0489
+- Mr. & Mrs. David Shlomo & Miriam Spector: Address: 240 Princeton Rd, Linden, NJ 07036, David Shlomo Cell: 718-873-3271, Miriam Cell: 347-526-2074
+- Mr. & Mrs. Yehuda Yosef & Suri Spira: Address: 78 Alison Rd, Roselle, NJ 07203, Home: 908-445-7315, Yehuda Yosef Cell: 929-214-2530, Suri Cell: 347-831-7852
+- Mr. & Mrs. Zurich & Miriam Spira: Address: 1040 Apgar Ter, Rahway, NJ 07065, Home: 718-662-8532, Zurich Cell: 917-662-8231, Miriam Cell: 347-436-5098
+- Mr. & Mrs. Levi & Malky Spitzer: Address: 1915 N Wood Ave, Linden, NJ 07036, Levi Cell: 347-756-1835, Malky Cell: 347-623-0825
+- Mr. & Mrs. Shaul Yecheskel & Gitty Spitzer: Address: 44 Princeton Rd, Linden, NJ 07036, Home: 718-384-0910, Gitty Cell: 347-967-2840
+- Mr. & Mrs. Avrum Chaim & Mindy Spitzer: Address: 1819 Summit Ter, Linden, NJ 07036, Home: 718-977-5610, Avrum Chaim Cell: 347-939-9593, Mindy Cell: 347-907-9380
+- Mr. & Mrs. Shlioma Mordechia & Genendy Spitzer: Address: 926 Rayhton Ter, Rahway, NJ 07065, Home: 732-669-7277, Shlioma Mordechia Cell: 347-831-6543, Genendy Cell: 347-675-1466
+- Mr. & Mrs. Yisroel & Malky Sprei: Address: 605 Hory St, Cranford, NJ 07016, Yisroel Cell: 347-424-2537, Malky Cell: 347-677-3489
+- Mr. & Mrs. Mordechai & Leah Srugo: Address: 58 Robbinwood Ter, Linden, NJ 07036, Mordechai Cell: 347-675-6130, Leah Cell: 929-442-4297
+- Mr. & Mrs. Yossi & Zissy Steinberg: Address: 582 Andress Ter, Union, NJ 07083, Yossi Cell: 917-974-9216, Zissy Cell: 646-753-2303
+- Mr. & Mrs. Shimmy & Chayala Steinmetz: Address: 64 Rosewood Ter, Linden, NJ 07036, Shimmy Cell: 347-668-3438, Chayala Cell: 917-554-2962
+- Mr. & Mrs. Naftuli & Reizy Steinwurzel: Address: 2306 Orchard Ter, Linden, NJ 07036, Home: 908-275-3130, Naftuli Cell: 347-533-1925, Reizy Cell: 347-385-3007
+- Mr. & Mrs. Yossi & Sara Mindy Stekel: Address: 1200 Orchard Ter, Linden, NJ 07036, Home: 908-486-1560, Yossi Cell: 732-770-6460, Sara Mindy Cell: 347-564-3487
+- Mr. & Mrs. Moshe & Dini Stengel: Address: 2717 Oakwood Pl, Linden, NJ 07036, Moshe Cell: 347-675-9567, Dini Cell: 917-531-2420
+- Mr. & Mrs. Volvy & Rochel Malky Stern: Address: 19 West 5th Ave, Linden, NJ 07036, Home: 908-718-5123, Volvy Cell: 347-786-3565, Rochel Malky Cell: 917-200-8373
+- Mr. & Mrs. Rafael & Baila Sternfeld: Address: 532 Fairway Rd, Linden, New Jersey 07036, Home: 908-494-3010, Rafael Cell: 917-696-5862, Baila Cell: 917-696-5053
+- Mr. & Mrs. Yakov Duvid & Gitty Sternlicht: Address: 401 Fernwood Ter, Linden, NJ 07036, Home: 718-435-2196, Yakov Duvid Cell: 347-946-4149, Gitty Cell: 718-344-7497
+- Mr. & Mrs. Chesky & Leahla Stiel: Address: 1 Raritan Rd, Linden, NJ 07036, Home: 908-587-5278, Chesky Cell: 917-588-7262, Leahla Cell: 347-782-3489
+- Mr. & Mrs. Simcha & Chana Sheindy Strohli: Address: 555 Stratford Rd, Union, NJ 07083, Home: 908-364-6000, Simcha Cell: 347-658-2214, Chana Sheindy Cell: 347-598-0849
+- Mr. & Mrs. Aron Leib & Shevy Strulowitz: Address: 520 Princeton Rd, Linden, NJ 07036, Home: 718-855-3840, Aron Leib Cell: 347-977-1883, Shevy Cell: 347-585-1354
+- Mr. & Mrs. Yitzchok & Brucha'la Sturm: Address: 444 Stratford Rd, Union, NJ 07083, Home: 718-633-3825, Yitzchok Cell: 347-628-4835, Brucha'la Cell: 347-485-1833
+- Mr. & Mrs. Yakkov Yoel & Yidis Tabak: Address: 1512 N Stiles St, Linden, NJ 07036, Yakkov Yoel Cell: 347-867-3627, Yidis Cell: 929-575-3575
+- Rabbi & Mrs. Chaim Shaya & Miriam Yitty Taub: Address: 2516 Summit Ter, Linden, NJ 07036, Home: 718-853-4657, Chaim Shaya Cell: 347-436-5554, Miriam Yitty Cell: 347-533-1531
+- Rabbi & Mrs. Yosef Yechezkel & Simi Taub: Address: 1302 Prospect Dr, Linden, NJ 07036, Home: 718-435-0686, Yosef Yechezkel Cell: 917-231-4614, Simi Cell: 718-928-8821
+- Mr. & Mrs. Motty & Fraida Leah Taub: Address: 241 Audrey Ter, Roselle, NJ 07203, Home: 718-854-1362, Motty Cell: 347-471-9627, Fraida Leah Cell: 347-737-6382
+- Mr. & Mrs. Yisroel Yaakov & Esty Taub: Address: 1007 West Henry St, Linden, NJ 07036, Home: 908-925-0479, Yisroel Yaakov Cell: 347-300-3569, Esty Cell: 929-454-4530
+- Mr. & Mrs. Chaim & Dini Tauber: Address: 75 Union County Pkwy, Clark, NJ 07066, Chaim Cell: 347-343-8282, Dini Cell: 917-474-4165
+- Mr. & Mrs. Hershy & Shaindy Tauber: Address: 1303 Dewitt Ter, Linden, NJ 07036, Home: 718-633-1490, Hershy Cell: 347-486-2833, Shaindy Cell: 917-960-1152
+- Mr. & Mrs. Moshe & Henny Tauber: Address: 113 Fernwood Ter, Linden, NJ 07036, Home: 718-403-0103, Moshe Cell: 718-812-3255, Henny Cell: 929-250-3095
+- Mr. & Mrs. Yoel & Miriam Esther Teichman: Address: 2017 Orchard Ter, Linden, NJ 07036, Home: 718-435-1859, Yoel Cell: 718-791-3329, Miriam Esther Cell: 917-202-1926
+- Mr. & Mrs. Aron & Elky Teitelbaum: Address: 1032 Rivington St, Roselle, NJ 07203, Elky Cell: 347-782-1789
+- Mr. & Mrs. Avrum Hersh & Zlatie Teitelbaum: Address: 230 Hillside Rd, Linden, NJ 07036, Home: 718-438-0975, Avrum Hersh Cell: 347-678-5464, Zlatie Cell: 347-693-8139
+- Mr. & Mrs. Moishe & Leah'le Teitelbaum: Address: 436 Clark Pl, Union, NJ 07083, Home: 718-435-2908, Moishe Cell: 917-202-8852, Leah'le Cell: 347-351-7146
+- Mr. & Mrs. Moshe & Riki Teitelbaum: Address: 2715 Wickersham Ave, Linden, NJ 07036, Home: 908-925-1041, Moshe Cell: 718-640-3391, Riki Cell: 929-226-7551
+- Rabbi & Mrs. Aryeh Leib & Hindy Teitelbaum: Address: 2715 N Wood Ave, Linden, NJ 07036, Home: 718-871-0670, Aryeh Leib Cell: 347-581-7794, Hindy Cell: 718-909-2702
+- Mr. & Mrs. Shlome Zalman & Baily Teitelbaum: Address: 841 Ercama St, Linden, NJ 07036, Shlome Zalman Cell: 347-603-5895, Baily Cell: 631-417-2080
+- Mr. & Mrs. Yitzchok & Ruchy Teitelbaum: Address: 507 Walnut St, Roselle Park, NJ 07204, Home: 908-298-6902, Yitzchok Cell: 917-687-6329, Ruchy Cell: 347-742-4058
+- Mr. & Mrs. Yossi & Chavy Teitelbaum: Address: 118 Rosewood Ter, Linden, NJ 07036, Home: 718-384-0784, Yossi Cell: 347-564-5698
+- Mr. & Mrs. Zisha & Dina Pessy Teitelbaum: Address: 350 Washington Ave, Union, NJ 07083, Home: 718-871-5838, Zisha Cell: 347-432-3012, Dina Pessy Cell: 347-423-0118
+- Mr. & Mrs. Moshe & Suri Teitelbaum: Address: 355 Sherwood Rd, Union, NJ 07083, Moshe Cell: 347-940-6886, Suri Cell: 347-517-8286
+- Mr. & Mrs. Shloimy & Idy Tessler: Address: 214 Hillside Rd, Linden, NJ 07036, Home: 718-851-0483, Shloimy Cell: 347-461-6767, Idy Cell: 347-452-0335
+- Mr. & Mrs. Chaim & Miriam Tevlovits: Address: 819 Ainsworth St, Linden, NJ 07036, Chaim Cell: 347-451-0283, Miriam Cell: 347-461-3359
+- Mr. & Mrs. Avrum Burech & Shani Topola: Address: 45 Independence Dr, Roselle, NJ 07203, Avrum Burech Cell: 347-452-1290, Shani Cell: 646-745-7133
+- Mr. & Mrs. Mendy & Leah'la Torn: Address: 125 Wyoming Ave, Union, NJ 07083, Mendy Cell: 929-460-4293, Leah'la Cell: 929-366-1949
+- Mr. & Mrs. Shimon & Goldy Twerski: Address: 369 Sycamore Dr, Union, NJ 07083, Shimon Cell: 718-781-5268, Goldy Cell: 347-832-9799
+- Mr. & Mrs. Chaim Sender & Devoire'le Twerski: Address: 900 Princeton Rd, Linden, NJ 07036, Home: 908-587-1986, Chaim Sender Cell: 718-812-4288, Devoire'le Cell: 347-452-3709
+- Mr. & Mrs. Benzion & Rivky Twersky: Address: 2312 Orchard Ter, Linden, NJ 07036, Benzion Cell: 917-691-2988, Rivky Cell: 718-781-5700
+- Rabbi & Reb. Yakkov Yosef & Chaya Devoiry Twersky: Address: 135 Thelma Ter, Linden, NJ 07036, Home: 718-438-5709, Yakkov Yosef Cell: 917-842-0621, Chaya Devoiry Cell: 347-534-7400
+- Mr. & Mrs. Duvid Yosef & Shaindy Tyrnauer: Address: 34 Furber Avenue, Linden, NJ 07036, Home: 718-388-1358, Duvid Yosef Cell: 845-274-0272, Shaindy Cell: 347-598-2874
+- Rabbi & Mrs. Avrum Shloime & Toby Unger: Address: 105 Reimar Ct, Union, NJ 07083, Home: 908-688-5152, Avrum Shloime Cell: 347-668-8202
+- Mr. & Mrs. Yossi & Yitty Unger: Address: 714 Franklin Ter, Roselle, NJ 07203, Yossi Cell: 845-502-6818, Yitty Cell: 718-288-2071
+- Mr. & Mrs. Duvid & Esther Chaya'la Wachsler: Address: 653 Salem Rd, Union, NJ 07083, Home: 718-781-8044, Duvid Cell: 718-344-7233, Esther Chaya'la Cell: 917-353-9412
+- Mr. & Mrs. Avrohom & Miriam Leah Wachsler: Address: 449 Clark Pl, Union, NJ 07083, Home: 718-435-4446, Avrohom Cell: 718-938-5519, Miriam Leah Cell: 347-978-3061
+- Rabbi & Mrs. Yitzchok Meyer & Sura'la Wagschal: Address: 2713 Oakwood Pl, Linden, NJ 07036, Home: 908-472-6813, Yitzchok Meyer Cell: 347-585-3941, Sura'la Cell: 347-585-8821
+- Mr. & Mrs. Eli & Miriam Walcowitz: Address: 715 Dewitt Street, Linden, NJ 07036, Eli Cell: 646-207-4458, Miriam Cell: 646-207-6334
+- Mr. & Mrs. Chaim Moshe & Perel Walzer: Address: 323 Wayne Ter, Union, NJ 07083, Home: 718-437-6463, Chaim Moshe Cell: 347-645-8146, Perel Cell: 347-645-8716
+- Mr. & Mrs. Nachman & Malky Weber: Address: 315 Princeton Rd, Linden, NJ 07036, Home: 908-486-1847, Nachman Cell: 917-929-6369, Malky Cell: 347-419-2899
+- Mr. & Mrs. Lipa & Chany Wechter: Address: 1244 Shaffer Ave, Roselle, NJ 07203, Home: 718-797-2167, Lipa Cell: 347-585-7600, Chany Cell: 347-263-2764
+- Rabbi & Mrs. Avraham & Shiffy Weinberg: Address: 2506 Dewitt Ter, Linden, NJ 07036, Home: 908-718-5420, Avraham Cell: 631-507-1465, Shiffy Cell: 347-717-2548
+- Mr. & Mrs. Yiddy & Gitty Weinberger: Address: 43 Edgewood Rd, Linden, NJ 07036, Yiddy Cell: 929-271-6583, Gitty Cell: 347-452-5440
+- Mr. & Mrs. Aron Daniel & Chavy Weinfeld: Address: 522 Spruce St, Linden, NJ 07036, Aron Daniel Cell: 917-200-6426, Chavy Cell: 347-362-9525
+- Mr. & Mrs. Benzion & Faigy Weingarten: Address: 903 Kent Place, Linden, NJ 07036, Home: 718-431-0290, Benzion Cell: 917-474-1998, Faigy Cell: 347-575-2987
+- Mr. & Mrs. Ezriel & Hinda Ruchel Weinreb: Address: 1028 Stuart Pl, Linden, NJ 07036, Home: 732-587-9112, Ezriel Cell: 347-452-7752, Hinda Ruchel Cell: 347-263-0143
+- Mr. & Mrs. Moshe & Pere'le Weinstock: Address: 705 Fairway Road, Linden, NJ 07036, Moshe Cell: 718-812-9893, Pere'le Cell: 347-489-3738
+- Mr. & Mrs. Naftuli & Gitty Weiser: Address: 219 Thelma Terrace, Linden, NJ 07036, Home: 718-436-0319
+- Mr. & Mrs. Yoel & Rivky Weiser: Address: 40 Yale Terrace, Linden, NJ 07036, Yoel Cell: 347-496-9045, Rivky Cell: 347-423-9157
+- Mr. & Mrs. Moshe & Chana Sheindy Weisfeld: Address: 1221 Prospect Drive, Linden, NJ 07036, Home: 908-486-4499, Moshe Cell: 347-452-7380, Chana Sheindy Cell: 718-851-4499
+- Mr. & Mrs. Chaim Volf & Mimi Weiss: Address: 222 Academy Terrace, Linden, NJ 07036, Home: 718-972-4035, Chaim Volf Cell: 917-748-7173, Mimi Cell: 917-583-2633
+- Mr. & Mrs. Chaim Zev & Rivky Weiss: Address: 14 Berlant Avenue, Linden, NJ 07036, Home: 908-486-1819, Chaim Zev Cell: 917-312-3709, Rivky Cell: 347-578-2393
+- Mr. & Mrs. Duvid & Chumy Weiss: Address: 962 Stacy Place, Rahway, NJ 07065, Duvid Cell: 347-986-6105, Chumy Cell: 347-534-6668
+- Mr. & Mrs. Meir Tzvi & Mimi Weiss: Address: 37 Fernwood Terrace, Linden, NJ 07036, Home: 718-759-6479, Meir Tzvi Cell: 347-828-5774, Mimi Cell: 347-436-6688
+- Mr. & Mrs. Moshe Ezra & Malky Weiss: Address: 1305 Kent Place, Linden, NJ 07036, Home: 718-438-0901, Moshe Ezra Cell: 347-221-9867, Malky Cell: 718-362-7517
+- Mr. & Mrs. Yakov Chaim & Chavy Weiss: Address: 63 Robbinwood Ter, Linden, NJ 07036, Home: 908-718-7913, Yakov Chaim Cell: 347-304-1669, Chavy Cell: 917-670-6629
+- Mr. & Mrs. Yaakov Yoel & Shiffy Weiss: Address: 30 Princeton Road, Linden, NJ 07036, Home: 718-852-2703, Yaakov Yoel Cell: 347-946-5994, Shiffy Cell: 917-588-1566
+- Mr. & Mrs. Yoel & Yocheved Weiss: Address: 548 Linden Avenue, Rahway, NJ 07065, Yoel Cell: 347-452-0861, Yocheved Cell: 347-675-6053
+- Mr. & Mrs. Avigdor & Toby Weiss: Address: 916 Orchard Terrace, Linden, NJ 07036, Avigdor Cell: 347-909-1048, Toby Cell: 718-484-1810
+- Mr. & Mrs. Yoel &  Weiss: Address: 441 Ainsworth St, Linden, NJ 07036
+- Mr. & Mrs. Yisroel Yehuda & Malky Weiss: Address: 18 Heather Lane, Roselle, NJ 07203, Home: 718-851-0368, Yisroel Yehuda Cell: 347-988-4381
+- Mr. & Mrs. Avraham & Rivky Weisz: Address: 1305 Orchard Terrace, Linden, NJ 07036, Avraham Cell: 732-956-7662, Rivky Cell: 845-262-8785
+- Mr. & Mrs. Yossi & Faigy Weisz: Address: 212 Harvard Road, Linden, NJ 07036, Yossi Cell: 845-729-1240, Faigy Cell: 347-563-6789
+- Mr. & Mrs. Avrum Duvid & Temmy Weller: Address: 1500 Dewitt Terrace, Linden, NJ 07036, Home: 908-486-2100, Avrum Duvid Cell: 917-553-2256, Temmy Cell: 718-419-4512
+- Mr. & Mrs. Eliezer Zusya & Esther Chany Wertheimer: Address: 27 West Gibbons Street, Linden, NJ 07036, Home: 908-486-1795, Eliezer Zusya Cell: 347-489-7252, Esther Chany Cell: 347-499-2836
+- Mr. & Mrs. Yoel & Devoiry Wertheimer: Address: 59 Rosewood Terrace, Linden, NJ 07036, Home: 908-486-0695, Yoel Cell: 845-807-4842, Devoiry Cell: 347-585-9531
+- Mr. & Mrs. Shulem & Chaya Wertzberger: Address: 2109 Summit Terrace, Linden, NJ 07036, Shulem Cell: 347-486-1935, Chaya Cell: 224-935-0285
+- Mr. & Mrs. Moshe Yitzchok & Peri Wertzberger: Address: 2830 Wickersham Avenue, Linden, NJ 07036, Moshe Yitzchok Cell: 917-584-6572, Peri Cell: 718-744-4016
+- Mr. & Mrs. Chesky & Idy Wertzberger: Address: 45 Furber Avenue, Linden, NJ 07036, Chesky Cell: 718-490-5227, Idy Cell: 347-374-0971
+- Mr. & Mrs. Moshe &  Wertzberger: Address: 2824 N Stiles St., Linden, NJ 07036, Moshe Cell: 845-825-4888,  Cell: 347-645-2090
+- Mr. & Mrs. Moshe & Rivky Wigder: Address: 116 King Street W, Hillside, NJ 07205, Home: 908-248-8621, Rivky Cell: 347-927-0016
+- Mrs.  &  Winkler: Address: 1309 Thelma Ter, Linden, NJ 07036,  Cell: 929-593-0386
+- Mr. & Mrs. Burech & Shaindy Wizel: Address: 1125 N Wood Ave, Linden, NJ 07036, Home: 718-972-1084, Burech Cell: 929-663-8001, Shaindy Cell: 347-534-6269
+- Mr. & Mrs. Naftuly & Margulis Wizel: Address: 633 Erudo St, Linden, NJ 07036, Naftuly Cell: 917-589-0582, Margulis Cell: 718-954-7926
+- Mr. & Mrs. Levi Yitzchok & Faigy Wiznitzer: Address: 45 Gesner St, Linden, NJ 07036, Home: 908-486-0917, Levi Yitzchok Cell: 347-675-7837, Faigy Cell: 347-909-0732
+- Mr. & Mrs. Avrom Yossi & Chaya Faigy Wolcowitz: Address: 725 Summit St, Linden, NJ 07036, Home: 908-357-2162, Avrom Yossi Cell: 347-971-1565, Chaya Faigy Cell: 347-971-1523
+- Mr. & Mrs. Mirel & Mirel Wolf: Address: 211 West Gibbons, Linden, NJ 07036, Home: 718-972-2229, Mirel Cell: 718-930-2924, Mirel Cell: 718-930-2507
+- Rabbi. & Mrs. Yaakov Yitzchok & Toby Worch: Address: 704 Summit Street, Linden, NJ 07036, Yaakov Yitzchok Cell: 718-913-5107, Toby Cell: 347-633-4081
+- Mr. & Mrs. Allen & Shulamith Zagier: Address: 1415 N Wood Ave, Linden, NJ 07036, Home: 908-486-0616, Allen Cell: 908-313-2184, Shulamith Cell: 908-242-5871
+- Rabbi & Mrs. Benzion & Miriam Zeida: Address: 355 Douglas Rd, Roselle, NJ 07203, Home: 718-435-2021, Benzion Cell: 347-988-5824, Miriam Cell: 347-585-6695
+- Mr. & Mrs. Yisroel & Chana Zeida: Address: 608 Academy Terrace, Linden, NJ 07036, Home: 718-853-3421, Yisroel Cell: 929-355-3206, Chana Cell: 908-733-6234
+- Mr. & Mrs. Chesky & Miriam Zeigler: Address: 671 Duquesne Ter, Union, NJ 07083, Chesky Cell: 917-474-6199, Miriam Cell: 347-585-7362
+- Mr. & Mrs. Yecheil & Gitty Zeitlin: Address: 123 Gesner St, Linden, NJ 07036, Yecheil Cell: 914-642-6079, Gitty Cell: 908-666-7719
+- Mr. & Mrs. Sender & Ella Zenwirth: Address: 117 Fernwood Terrace, Linden, NJ 07036, Home: 718-633-1051, Sender Cell: 347-585-7427, Ella Cell: 347-715-0592
+- Mr. & Mrs. Shia & Surala Zenwirth: Address: 825 Laurita St, Linden, NJ 07036, Home: 908-486-2718, Shia Cell: 347-831-5887, Surala Cell: 347-436-6907
+- Mr. & Mrs. Shulem & Henna Faigy Zenwirth: Address: 46 Edgewood Road, Linden, NJ 07036, Home: 908-925-4695, Shulem Cell: 347-853-9086, Henna Faigy Cell: 347-675-3273
+- Mr. & Mrs. Yakkov Menachem & Rochmy Zenwirth: Address: 1306 Dewitt Terrace, Linden, NJ 07036, Home: 718-438-3025, Yakkov Menachem Cell: 646-951-3785, Rochmy Cell: 347-244-5712
+- Mr. & Mrs. Ben Zion & Chany Zimmer: Address: 21 Palisade Road, Linden, NJ 07036, Home: 718-851-0424, Ben Zion Cell: 347-770-0949, Chany Cell: 347-351-4299
+- Mr. & Mrs. Chesky & Henny Zionce: Address: 485 Whitewood Road, Union, NJ 07083, Chesky Cell: 347-786-3132, Henny Cell: 718-207-2637
+- Mr. & Mrs. Shulim & Yidis Zionce: Address: 531 Princeton Rd, Linden, NJ 07036, Home: 718-851-1874, Shulim Cell: 347-528-9951, Yidis Cell: 347-243-7136
+- Mr. & Mrs. Menashe & Miriam Zitronenbaum: Address: 101 Gesner street, Linden, NJ 07036, Home: 908-925-3388, Menashe Cell: 347-786-0987, Miriam Cell: 347-988-9709
+- Mr. & Mrs. Shia & Chany Zitronenbaum: Address: 830 Erudo St, Linden, NJ 07036, Home: 718-851-5261, Shia Cell: 347-461-7883, Chany Cell: 347-786-0575
+- Rabbi & Mrs. Avrum & Malky Zoberman: Address: 450 Bailey Ave, Union, NJ 07083, Home: 718-437-1649, Avrum Cell: 917-836-7039, Malky Cell: 347-563-4315
+- Mr. & Mrs. Moishe & Esther Malky Zoberman: Address: 341 Wayne Terrace, Union, NJ 07083, Home: 908-368-0138, Moishe Cell: 917-586-1352, Esther Malky Cell: 718-930-7124
+- Mr. & Mrs. Yosef & Esther Roizy Zoldan: Address: 931 Orchard Terrace, Linden, NJ 07036, Home: 908-368-0119, Yosef Cell: 347-263-1949, Esther Roizy Cell: 347-213-0874
+-   &  כ''ק אדמו"ר מקאלאמייא שליט''א: Address: 1706 Westover Rd, Linden, NJ 07036, Home: 718-436-9767,  Cell: 718-724-3846
+-   &  כ"ק אדמו"ר מקאסאן שליט"א: Address: 1226 Orchard Ter, Linden, NJ 07036, Home: 718-854-8839,  Cell: 347-314-3383
 
 `;
 
@@ -881,11 +1513,8 @@ app.post("/webhook", async (req, res) => {
         );
 
         const reply = claudeResponse.data.content[0].text;
-        console.log("Claude reply ready, sending to WhatsApp...");
-        console.log("Using Phone Number ID:", PHONE_NUMBER_ID);
-        console.log("Token preview:", WHATSAPP_TOKEN ? WHATSAPP_TOKEN.substring(0, 20) + "..." : "NOT SET");
 
-        const waResponse = await axios.post(
+        await axios.post(
           `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
           {
             messaging_product: "whatsapp",
@@ -900,7 +1529,6 @@ app.post("/webhook", async (req, res) => {
           }
         );
 
-        console.log("WhatsApp response status:", waResponse.status);
         console.log(`Replied to ${userPhone}`);
       }
     }
