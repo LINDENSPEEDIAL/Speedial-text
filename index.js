@@ -1,18 +1,22 @@
-
 const express = require("express");
 const axios = require("axios");
 const app = express();
 app.use(express.json());
- 
+
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = "1185305807988713";
 const VERIFY_TOKEN = "speedial123";
- 
+
+// Log env vars on startup (masked)
+console.log("CLAUDE_API_KEY set:", !!CLAUDE_API_KEY);
+console.log("WHATSAPP_TOKEN set:", !!WHATSAPP_TOKEN);
+console.log("WHATSAPP_TOKEN preview:", WHATSAPP_TOKEN ? WHATSAPP_TOKEN.substring(0, 20) + "..." : "NOT SET");
+
 const DIRECTORY_DATA = `You are the Speedial local directory assistant for the Linden, NJ and surrounding areas community. You help people find local businesses, services, doctors, community resources, and more.
- 
+
 When someone asks for a service or business, search the directory below and provide the name, phone number, and address if available. Be friendly and helpful. If multiple options exist, list them all. If you do not have what they need, apologize and suggest they call the main Speedial number.
- 
+
 DIRECTORY LISTINGS:
 - ABA [ABA]: Tel 718-489-9844
 - Abbey Ezra [Babysitter]: Tel 908-377-8349
@@ -830,9 +834,9 @@ DIRECTORY LISTINGS:
 - חברים [Emergency Numbers]: Tel 908-777-1119
 - הצלה [Emergency Numbers]: Tel 908-800-9200
 - Police/ Fire [Emergency Numbers]: Tel 911
- 
+
 `;
- 
+
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
@@ -844,7 +848,7 @@ app.get("/webhook", (req, res) => {
     res.sendStatus(403);
   }
 });
- 
+
 app.post("/webhook", async (req, res) => {
   try {
     const body = req.body;
@@ -852,13 +856,13 @@ app.post("/webhook", async (req, res) => {
       const entry = body.entry?.[0];
       const changes = entry?.changes?.[0];
       const message = changes?.value?.messages?.[0];
- 
+
       if (message && message.type === "text") {
         const userMessage = message.text.body;
         const userPhone = message.from;
- 
+
         console.log(`Message from ${userPhone}: ${userMessage}`);
- 
+
         const claudeResponse = await axios.post(
           "https://api.anthropic.com/v1/messages",
           {
@@ -875,10 +879,13 @@ app.post("/webhook", async (req, res) => {
             },
           }
         );
- 
+
         const reply = claudeResponse.data.content[0].text;
- 
-        await axios.post(
+        console.log("Claude reply ready, sending to WhatsApp...");
+        console.log("Using Phone Number ID:", PHONE_NUMBER_ID);
+        console.log("Token preview:", WHATSAPP_TOKEN ? WHATSAPP_TOKEN.substring(0, 20) + "..." : "NOT SET");
+
+        const waResponse = await axios.post(
           `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
           {
             messaging_product: "whatsapp",
@@ -892,17 +899,22 @@ app.post("/webhook", async (req, res) => {
             },
           }
         );
- 
-        console.log(`Replied to ${userPhone}: ${reply}`);
+
+        console.log("WhatsApp response status:", waResponse.status);
+        console.log(`Replied to ${userPhone}`);
       }
     }
     res.sendStatus(200);
   } catch (error) {
     console.error("Error:", error.message);
+    if (error.response) {
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", JSON.stringify(error.response.data));
+    }
     res.sendStatus(500);
   }
 });
- 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Speedial bot is running on port ${PORT}`);
